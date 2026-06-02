@@ -115,7 +115,7 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
                 className="w-[120%] max-w-none border-0 absolute left-[-5%] opacity-90 group-hover:opacity-100 transition-opacity duration-500"
                 style={{ height: '850px', top: '-80px' }}
                 scrolling="no"
-                allowtransparency="true"
+                allowTransparency={true}
               />
             </div>
           </div>
