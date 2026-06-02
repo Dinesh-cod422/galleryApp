@@ -1,0 +1,92 @@
+[
+  {
+    "id": "1",
+    "embedUrl": "https://www.instagram.com/p/DYpcu3FGpPk/?igsh=MWFzNzA4MjZwdzFpOA==",
+    "imageUrl": "/pins/1.webp",
+    "title": "Cinematic Sunset",
+    "prompt": "A breathtaking cinematic sunset over a futuristic cyberpunk city, neon lights reflecting on wet streets, Unreal Engine 5 render, highly detailed.",
+    "author": "VisualsX",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/1.jpg"
+  },
+  {
+    "id": "2",
+    "embedUrl": "https://www.instagram.com/p/DYuKVY7Gmow/?igsh=MWluc3RoaDczcnJ4dQ==",
+    "imageUrl": "/pins/2.webp",
+    "title": "Enchanted Forest",
+    "prompt": "A mystical enchanted forest with glowing bioluminescent mushrooms, fairies flying, volumetric fog, ethereal lighting, fantasy concept art.",
+    "author": "FantasyArt",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/2.jpg"
+  },
+  {
+    "id": "3",
+    "embedUrl": "https://www.instagram.com/p/DYxBPHyGv0f/?igsh=MXFnOGJvYWI4cjN5cQ==",
+    "imageUrl": "/pins/3.webp",
+    "title": "Space Exploration",
+    "prompt": "An astronaut floating near a massive glowing nebula, hyper-realistic space photography, vibrant colors, cosmic background, highly detailed suit.",
+    "author": "AstroJourney",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/3.jpg"
+  },
+  {
+    "id": "4",
+    "embedUrl": "https://www.instagram.com/p/DY7YlDeGuwY/?igsh=MTdqM3VycW8wYWNobw==",
+    "imageUrl": "/pins/4.webp",
+    "title": "Cozy Cabin Interior",
+    "prompt": "A cozy wooden cabin interior during a snowy evening, a warm fireplace crackling, soft yellow lighting, photorealistic, architectural rendering.",
+    "author": "CozyVibes",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/4.jpg"
+  },
+  {
+    "id": "5",
+    "embedUrl": "https://www.instagram.com/p/DY8o8k5mjd5/?igsh=Mnp2czZqYnR0aThs",
+    "imageUrl": "/pins/5.webp",
+    "title": "Mecha Robot",
+    "prompt": "A giant futuristic mecha robot standing in a ruined city, overgrown with vines and moss, cinematic lighting, post-apocalyptic, dramatic sky.",
+    "author": "MechaDesign",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/5.jpg"
+  },
+  {
+    "id": "6",
+    "embedUrl": "https://www.instagram.com/p/DYpcu3FGpPk/?igsh=MWFzNzA4MjZwdzFpOA==",
+    "imageUrl": "/pins/1.webp",
+    "title": "Underwater Ruins",
+    "prompt": "Ancient temple ruins submerged deep underwater, shafts of sunlight piercing through the blue water, schools of colorful fish, ethereal atmosphere.",
+    "author": "DeepSea",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/6.jpg"
+  },
+  {
+    "id": "7",
+    "embedUrl": "https://www.instagram.com/p/DYuKVY7Gmow/?igsh=MWluc3RoaDczcnJ4dQ==",
+    "imageUrl": "/pins/2.webp",
+    "title": "Neon Samurai",
+    "prompt": "A samurai warrior standing in the rain in a neon-lit futuristic alleyway, holding a glowing katana, cyberpunk aesthetic, dramatic shadows.",
+    "author": "CyberSamurai",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/7.jpg"
+  },
+  {
+    "id": "8",
+    "embedUrl": "https://www.instagram.com/p/DYxBPHyGv0f/?igsh=MXFnOGJvYWI4cjN5cQ==",
+    "imageUrl": "/pins/3.webp",
+    "title": "Surreal Desert",
+    "prompt": "A surreal desert landscape with giant floating geometric shapes made of crystal, pink sky, Salvador Dali inspired, dreamlike photography.",
+    "author": "Dreamscape",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/8.jpg"
+  },
+  {
+    "id": "9",
+    "embedUrl": "https://www.instagram.com/p/DY7YlDeGuwY/?igsh=MTdqM3VycW8wYWNobw==",
+    "imageUrl": "/pins/4.webp",
+    "title": "Steampunk Airship",
+    "prompt": "A massive steampunk airship flying through the clouds at golden hour, brass and copper details, intricate gears, Victorian aesthetic, masterpiece.",
+    "author": "SteamWorks",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/9.jpg"
+  },
+  {
+    "id": "10",
+    "embedUrl": "https://www.instagram.com/p/DY8o8k5mjd5/?igsh=Mnp2czZqYnR0aThs",
+    "imageUrl": "/pins/5.webp",
+    "title": "Magical Library",
+    "prompt": "A vast magical library with flying books, endless towering shelves, glowing magical dust in the air, warm candlelight, intricate details.",
+    "author": "BookWorm",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/10.jpg"
+  }
+]
