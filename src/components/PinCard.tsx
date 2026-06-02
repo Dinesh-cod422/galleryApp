@@ -48,7 +48,6 @@ export default function PinCard({ pin }: PinCardProps) {
             className="w-[110%] max-w-none border-0 absolute left-[-5%] transition-transform duration-1000 group-hover:scale-[1.05] opacity-90 group-hover:opacity-100"
             style={{ height: '600px', top: '-60px' }}
             scrolling="no"
-            allowTransparency={true}
           />
         </div>
         {/* Transparent overlay to capture clicks for Next.js Link navigation */}

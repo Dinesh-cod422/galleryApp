@@ -82,7 +82,7 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#000000] dark:text-white pb-20 selection:bg-black/10 dark:selection:bg-white/30 relative transition-colors duration-300">
+    <main className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#000000] dark:text-white pb-20 selection:bg-black/10 dark:selection:bg-white/30 relative overflow-x-hidden transition-colors duration-300">
       {/* Ambient floating orbs background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-[20%] left-[10%] w-[40vw] h-[40vw] bg-purple-600/5 dark:bg-purple-600/10 rounded-full blur-[100px] dark:blur-[120px] animate-float-orb" />
@@ -92,7 +92,7 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
       <Header />
 
       {/* Main Content Area */}
-      <div className="max-w-6xl mx-auto pt-28 px-4 sm:px-6 relative z-10">
+      <div className="max-w-6xl mx-auto pt-24 md:pt-28 px-4 sm:px-6 relative z-10">
 
         {/* Back navigation */}
         <Link href="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white transition-all group mb-8">
@@ -105,25 +105,24 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
           <span className="font-semibold tracking-wide text-sm">Back to Gallery</span>
         </Link>
 
-        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+        <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-start w-full">
 
           {/* Reel Section */}
-          <div className="w-full lg:w-1/2 flex justify-center lg:justify-start">
-            <div className="w-full max-w-[400px] h-[500px] bg-white dark:bg-[#111] rounded-[2rem] overflow-hidden shadow-xl dark:shadow-2xl relative border border-black/5 dark:border-white/10 group lg:sticky top-28">
+          <div className="w-full lg:w-1/2 flex justify-center lg:justify-end shrink-0">
+            <div className="w-full max-w-[360px] sm:max-w-[420px] aspect-[4/5] bg-[#0a0a0a] rounded-[2.5rem] overflow-hidden shadow-2xl relative border border-black/10 dark:border-white/10 flex-shrink-0 z-10">
               <iframe
                 src={getInstagramEmbedUrl(pin.embedUrl)}
-                className="w-[120%] max-w-none border-0 absolute left-[-5%] opacity-90 group-hover:opacity-100 transition-opacity duration-500"
-                style={{ height: '850px', top: '-80px' }}
+                className="w-full h-full border-0 absolute inset-0 scale-[1.15] opacity-95 group-hover:opacity-100 transition-opacity duration-500"
+                style={{ transformOrigin: 'center center' }}
                 scrolling="no"
-                allowTransparency={true}
               />
             </div>
           </div>
 
           {/* Details Section */}
-          <div className="lg:w-1/2 flex flex-col justify-center animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-            <div className="flex items-center justify-between mb-4">
-              <div className="inline-block px-3 py-1 rounded-full border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 w-max text-xs font-semibold tracking-widest text-gray-500 dark:text-gray-400 uppercase">
+          <div className="w-full lg:w-1/2 flex flex-col justify-center animate-fade-in-up z-20 pt-2 lg:pt-8" style={{ animationDelay: '200ms' }}>
+            <div className="flex items-center justify-between mb-6">
+              <div className="inline-block px-4 py-1.5 rounded-full border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 w-max text-xs font-bold tracking-widest text-gray-600 dark:text-gray-300 uppercase shadow-sm">
                 Premium Resource
               </div>
 
@@ -131,12 +130,12 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
               {mounted && (
                 <button
                   onClick={() => isLiked ? removeFromWishlist(pin.id) : addToWishlist(pin)}
-                  className={`flex items-center gap-2 text-sm font-semibold px-4 py-1.5 rounded-full border transition-all ${isLiked
+                  className={`flex items-center gap-2 text-sm font-bold px-5 py-2 rounded-full border transition-all shadow-sm ${isLiked
                     ? 'bg-red-50 text-red-500 border-red-200 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/30'
-                    : 'bg-white text-gray-600 border-gray-200 hover:border-black/20 dark:bg-black dark:text-gray-400 dark:border-white/10 dark:hover:border-white/30'
+                    : 'bg-white text-gray-700 border-gray-200 hover:border-black/20 dark:bg-black dark:text-gray-300 dark:border-white/10 dark:hover:border-white/30'
                     }`}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill={isLiked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={isLiked ? "animate-pulse" : ""}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill={isLiked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={isLiked ? "animate-pulse" : ""}>
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                   </svg>
                   {isLiked ? 'Saved' : 'Save'}
@@ -144,7 +143,7 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
               )}
             </div>
 
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-6 tracking-tight leading-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 sm:mb-6 tracking-tight leading-tight">
               {pin.title}
             </h1>
 
@@ -164,7 +163,7 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
             </h3>
 
             <div className="bg-white dark:bg-[#0a0a0a] p-6 rounded-[2rem] mb-10 border border-black/5 dark:border-white/10 shadow-xl dark:shadow-[0_0_30px_rgba(0,0,0,0.5)] flex flex-col items-start relative group">
-              <div className={`text-gray-700 dark:text-gray-300 text-base md:text-lg leading-relaxed font-serif italic whitespace-pre-wrap transition-all duration-500 ${!isPromptExpanded ? "line-clamp-6" : ""}`}>
+              <div className={`text-gray-700 dark:text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed font-serif italic whitespace-pre-wrap transition-all duration-500 ${!isPromptExpanded ? "line-clamp-6" : ""}`}>
                 "{pin.prompt}"
               </div>
 
@@ -187,7 +186,7 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
             <div className="flex flex-col sm:flex-row gap-4 mt-auto">
               <button
                 onClick={copyPrompt}
-                className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-gray-900 text-white dark:bg-white dark:text-black font-bold py-4 px-6 rounded-full hover:scale-105 transition-all shadow-lg dark:shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-xl dark:hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] relative overflow-hidden group"
+                className="flex-1 min-w-0 sm:min-w-[200px] flex items-center justify-center gap-2 sm:gap-3 bg-gray-900 text-white dark:bg-white dark:text-black font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-full hover:scale-105 transition-all shadow-lg dark:shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-xl dark:hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] relative overflow-hidden group text-sm sm:text-base"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 dark:via-black/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
                 <span className="relative z-10">{copiedPrompt ? "Copied Prompt!" : "Copy Full Prompt"}</span>
@@ -195,7 +194,7 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
 
               <button
                 onClick={copyLink}
-                className="flex-1 min-w-[200px] flex items-center justify-center gap-3 bg-white dark:bg-[#1a1a1a] text-black dark:text-white font-bold py-4 px-6 rounded-full hover:bg-gray-100 dark:hover:bg-[#2a2a2a] transition-all border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 shadow-sm"
+                className="flex-1 min-w-0 sm:min-w-[200px] flex items-center justify-center gap-2 sm:gap-3 bg-white dark:bg-[#1a1a1a] text-black dark:text-white font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-full hover:bg-gray-100 dark:hover:bg-[#2a2a2a] transition-all border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 shadow-sm text-sm sm:text-base"
               >
                 {copiedLink ? "Link Copied!" : "Share Link"}
               </button>

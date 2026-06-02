@@ -17,9 +17,11 @@ export default function Header() {
       <div className="flex items-center gap-6">
         {/* Minimalist Logo */}
         <Link href="/" className="flex items-center gap-3 group cursor-pointer">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-gray-900 to-gray-600 dark:from-white dark:via-gray-200 dark:to-gray-500 flex items-center justify-center text-white dark:text-black font-bold text-lg shadow-lg dark:shadow-glow group-hover:scale-110 transition-transform duration-500">
-            P
-          </div>
+          <img 
+            src="/applogo.png" 
+            alt="Logo" 
+            className="w-10 h-10 rounded-full object-cover shadow-lg dark:shadow-glow group-hover:scale-110 transition-transform duration-500" 
+          />
           <span className="font-bold text-xl hidden sm:block tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-500 dark:from-white dark:to-gray-400">PostGallery</span>
         </Link>
         
