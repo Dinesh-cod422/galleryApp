@@ -147,13 +147,7 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
               {pin.title}
             </h1>
 
-            <div className="flex items-center gap-3 mb-8">
-              <img src={pin.avatarUrl} alt={pin.author} className="w-12 h-12 rounded-full border-2 border-white dark:border-white/20 shadow-md dark:shadow-[0_0_15px_rgba(255,255,255,0.1)]" />
-              <div>
-                <p className="font-medium text-lg tracking-wide">{pin.author}</p>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">Verified Creator</p>
-              </div>
-            </div>
+
 
             <div className="w-full h-px bg-gradient-to-r from-black/10 dark:from-white/20 to-transparent mb-8" />
 

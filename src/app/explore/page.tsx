@@ -1,11 +1,34 @@
 import PinCard from "@/components/PinCard";
 import { getPins } from "@/data/mock-pins";
 import Header from "@/components/Header";
-import Link from "next/link";
+import CategoryFilter from "@/components/CategoryFilter";
 
-export default async function Home() {
-  const allPins = await getPins();
-  const trendingPins = allPins.slice(0, 8);
+export default async function ExplorePage(props: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+  const searchParams = await props.searchParams;
+  const q = typeof searchParams.q === 'string' ? searchParams.q.toLowerCase() : '';
+  const category = typeof searchParams.category === 'string' ? searchParams.category.toLowerCase() : '';
+  
+  let pins = await getPins();
+  
+  // Apply Search Query Filter
+  if (q) {
+    pins = pins.filter(pin => 
+      pin.title.toLowerCase().includes(q) || 
+      pin.prompt.toLowerCase().includes(q) || 
+      pin.author.toLowerCase().includes(q)
+    );
+  }
+
+  // Apply Category Filter
+  if (category && category !== 'all') {
+    pins = pins.filter(pin => 
+      pin.title.toLowerCase().includes(category) || 
+      pin.prompt.toLowerCase().includes(category) || 
+      pin.author.toLowerCase().includes(category)
+    );
+  }
   
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#000000] dark:text-white selection:bg-black/10 dark:selection:bg-white/30 relative overflow-x-hidden transition-colors duration-300">
@@ -18,29 +41,19 @@ export default async function Home() {
 
       <Header />
 
-      <div className="relative z-10 px-4 sm:px-6 pt-32 pb-4 max-w-[2200px] mx-auto">
-        <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-2">Trending Designs</h1>
-        <p className="text-gray-500 dark:text-gray-400 text-lg">A curated selection of the most popular aesthetic prompts.</p>
+      <div className="relative z-10 px-4 sm:px-6 pt-32 max-w-[2200px] mx-auto">
+        <h1 className="text-3xl font-bold mb-4">Explore Gallery</h1>
+        <CategoryFilter />
       </div>
 
       {/* Masonry Grid Layout */}
-      <div className="relative z-10 px-4 sm:px-6 pt-8 pb-12 max-w-[2200px] mx-auto">
+      <div className="relative z-10 px-4 sm:px-6 pt-4 pb-24 max-w-[2200px] mx-auto min-h-screen">
         <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-6 sm:gap-8 mx-auto">
-          {trendingPins.map((pin, index) => (
+          {pins.map((pin, index) => (
             <div key={pin.id} className="animate-fade-in-up" style={{ animationDelay: `${(index % 10) * 100 + 100}ms` }}>
               <PinCard pin={pin} />
             </div>
           ))}
-        </div>
-        
-        <div className="flex justify-center mt-16 mb-8">
-          <Link href="/explore" className="px-8 py-4 bg-gray-900 text-white dark:bg-white dark:text-black font-bold rounded-full hover:scale-105 transition-all shadow-xl text-lg flex items-center gap-3">
-            Explore All Designs
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
-          </Link>
         </div>
       </div>
     </main>
