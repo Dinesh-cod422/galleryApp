@@ -15,7 +15,7 @@ const DATA_URL = process.env.NEXT_PUBLIC_DATA_URL || "https://raw.githubusercont
 export async function getPins(): Promise<Pin[]> {
   try {
     const res = await fetch(DATA_URL, {
-      cache: "no-store", // Ensures we always get the latest data
+      next: { revalidate: 60 }, // Re-fetch data every 60 seconds (Incremental Static Regeneration)
     });
     
     if (!res.ok) {
