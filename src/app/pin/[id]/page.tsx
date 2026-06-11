@@ -158,7 +158,7 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
 
             <div className="bg-white dark:bg-[#0a0a0a] p-6 rounded-[2rem] mb-10 border border-black/5 dark:border-white/10 shadow-xl dark:shadow-[0_0_30px_rgba(0,0,0,0.5)] flex flex-col items-start relative group">
               <div className={`text-gray-700 dark:text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed font-serif italic whitespace-pre-wrap transition-all duration-500 ${!isPromptExpanded ? "line-clamp-6" : ""}`}>
-                "{pin.prompt}"
+                &quot;{pin.prompt}&quot;
               </div>
 
               {/* Fade out effect when collapsed */}
