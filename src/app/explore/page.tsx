@@ -9,27 +9,54 @@ export default async function ExplorePage(props: {
   const searchParams = await props.searchParams;
   const q = typeof searchParams.q === 'string' ? searchParams.q.toLowerCase() : '';
   const category = typeof searchParams.category === 'string' ? searchParams.category.toLowerCase() : '';
-  
+
   let pins = await getPins();
-  
+
   // Apply Search Query Filter
   if (q) {
-    pins = pins.filter(pin => 
-      pin.title.toLowerCase().includes(q) || 
-      pin.prompt.toLowerCase().includes(q) || 
+    pins = pins.filter(pin =>
+      pin.title.toLowerCase().includes(q) ||
+      pin.prompt.toLowerCase().includes(q) ||
       pin.author.toLowerCase().includes(q)
     );
   }
 
   // Apply Category Filter
   if (category && category !== 'all') {
-    pins = pins.filter(pin => 
-      pin.title.toLowerCase().includes(category) || 
-      pin.prompt.toLowerCase().includes(category) || 
-      pin.author.toLowerCase().includes(category)
-    );
+    pins = pins.filter(pin => {
+      // Check exact filter matches from pins.json first
+      if (pin.filter && pin.filter.some(f => f.toLowerCase() === category.toLowerCase())) {
+        return true;
+      }
+      
+      // Smart fallback for specific categories
+      const text = (pin.title + ' ' + pin.prompt).toLowerCase();
+      
+      if (category === "women's") {
+        return /\b(woman|women|female|girl|bride|saree|kurti|her|she|ladies|lady)\b/.test(text);
+      }
+      
+      if (category === "men's") {
+        return /\b(man|men|male|boy|groom|he|his|him|guy|mens)\b/.test(text);
+      }
+      
+      if (category === "love") {
+        return /\b(love|romantic|heart|valentine|romance|affection)\b/.test(text);
+      }
+      
+      if (category === "baby") {
+        return /\b(baby|infant|toddler|child|kid|newborn)\b/.test(text);
+      }
+      
+      if (category === "couple") {
+        return /\b(couple|husband|wife|wedding|together|partner)\b/.test(text);
+      }
+      
+      // Generic fallback
+      return text.includes(category) || pin.author.toLowerCase().includes(category);
+    });
   }
-  
+
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#000000] dark:text-white selection:bg-black/10 dark:selection:bg-white/30 relative overflow-x-hidden transition-colors duration-300">
       {/* Background ambient glow - Floating Orbs */}
@@ -51,7 +78,7 @@ export default async function ExplorePage(props: {
         <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-6 sm:gap-8 mx-auto">
           {pins.map((pin, index) => (
             <div key={pin.id} className="animate-fade-in-up" style={{ animationDelay: `${(index % 10) * 100 + 100}ms` }}>
-              <PinCard pin={pin} />
+              <PinCard pin={pin} showTrendingTag={pin.Tstatus === "Trending"} />
             </div>
           ))}
         </div>

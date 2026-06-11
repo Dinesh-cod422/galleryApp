@@ -5,8 +5,19 @@ import Link from "next/link";
 
 export default async function Home() {
   const allPins = await getPins();
-  const trendingPins = allPins.slice(0, 8);
   
+  // Filter by Trending and sort by TrendingPosition (ascending)
+  let trendingPins = allPins
+    .filter(pin => pin.Tstatus === "Trending")
+    .sort((a, b) => (a.TrendingPosition ?? 999) - (b.TrendingPosition ?? 999));
+  
+  // Fallback just in case GitHub pins.json doesn't have Tstatus yet
+  if (trendingPins.length === 0) {
+    trendingPins = allPins.slice(0, 8);
+  } else {
+    trendingPins = trendingPins.slice(0, 8);
+  }
+
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#000000] dark:text-white selection:bg-black/10 dark:selection:bg-white/30 relative overflow-x-hidden transition-colors duration-300">
       {/* Background ambient glow - Floating Orbs */}
@@ -28,11 +39,11 @@ export default async function Home() {
         <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-6 sm:gap-8 mx-auto">
           {trendingPins.map((pin, index) => (
             <div key={pin.id} className="animate-fade-in-up" style={{ animationDelay: `${(index % 10) * 100 + 100}ms` }}>
-              <PinCard pin={pin} />
+              <PinCard pin={pin} showTrendingTag={true} />
             </div>
           ))}
         </div>
-        
+
         <div className="flex justify-center mt-16 mb-8">
           <Link href="/explore" className="px-8 py-4 bg-gray-900 text-white dark:bg-white dark:text-black font-bold rounded-full hover:scale-105 transition-all shadow-xl text-lg flex items-center gap-3">
             Explore All Designs
