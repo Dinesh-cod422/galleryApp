@@ -17,7 +17,7 @@ export interface Pin {
 // For example: "https://raw.githubusercontent.com/username/repo/main/pins.json"
 const DATA_URL =
   process.env.NEXT_PUBLIC_DATA_URL ||
-  "https://raw.githubusercontent.com/Dinesh-cod422/galleryApp/main/pins.json";
+  "https://raw.githubusercontent.com/Dinesh-cod422/jsonFiles/main/dataofMomentsGalleryApp";
 
 export async function getPins(): Promise<Pin[]> {
   if (process.env.NODE_ENV === 'development') {
