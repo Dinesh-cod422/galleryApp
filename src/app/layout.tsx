@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { GoogleAnalytics } from '@next/third-parties/google';
@@ -14,9 +14,61 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
+  ],
+  width: "device-width",
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
-  title: "Moments Gallari",
-  description: "A curated collection of aesthetic prompts and images.",
+  title: {
+    default: "Moments Gallari - Premium AI Prompts & Aesthetic Designs",
+    template: "%s | Moments Gallari"
+  },
+  description: "Explore a curated collection of beautiful, high-quality AI prompts and custom design ideas. Copy premium prompts for Midjourney, Stable Diffusion, and more.",
+  keywords: [
+    "Moments Gallari",
+    "Moments Gallery",
+    "Moment Galleri",
+    "AI Prompts",
+    "Aesthetic Designs",
+    "Midjourney Prompts",
+    "Stable Diffusion Prompts",
+    "AI Art Catalog",
+    "Design Prompts",
+    "Creative Prompts"
+  ],
+  metadataBase: new URL("https://moment-galleri.vercel.app"),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Moments Gallari - Premium AI Prompts & Aesthetic Designs",
+    description: "Explore a curated collection of beautiful, high-quality AI prompts and custom design ideas.",
+    url: "https://moment-galleri.vercel.app",
+    siteName: "Moments Gallari",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Moments Gallari - Premium AI Prompts & Aesthetic Designs",
+    description: "Explore a curated collection of beautiful, high-quality AI prompts and custom design ideas.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 import { ThemeProvider } from "@/components/ThemeProvider";

@@ -50,11 +50,6 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     return wishlist.some(item => item.id === pinId);
   };
 
-  // Only render children when mounted to prevent hydration mismatches with localStorage
-  if (!mounted) {
-    return null;
-  }
-
   return (
     <WishlistContext.Provider value={{ wishlist, addToWishlist, removeFromWishlist, isInWishlist }}>
       {children}

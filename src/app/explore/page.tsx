@@ -2,6 +2,13 @@ import PinCard from "@/components/PinCard";
 import { getPins } from "@/data/mock-pins";
 import Header from "@/components/Header";
 import CategoryFilter from "@/components/CategoryFilter";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Explore Aesthetic AI Prompts Library",
+  description: "Search and filter through the complete catalog of cinematic inspirations, image styles, and Midjourney/Stable Diffusion prompt configurations.",
+  keywords: ["ai prompt database", "midjourney catalog", "explore aesthetic prompts", "stable diffusion prompts"],
+};
 
 export default async function ExplorePage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
