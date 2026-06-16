@@ -122,18 +122,64 @@ export async function POST(req: Request) {
     // Write the updated pins back to the file
     await fs.writeFile(filePath, JSON.stringify(pins, null, 2), "utf8");
 
-    // Perform git operations to commit and push changes
+    // Push directly to GitHub repository using REST API
     try {
-      await execAsync(`git add public/pins.json`, { cwd: process.cwd() });
-      await execAsync(`git commit -m "Auto-add new pin: ${generatedTitle}"`, { cwd: process.cwd() });
-      await execAsync(`git push`, { cwd: process.cwd() });
-      console.log("Successfully pushed changes to repository");
+      const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+      if (!GITHUB_TOKEN) {
+        throw new Error("GITHUB_TOKEN is not set in environment variables");
+      }
+
+      const repoOwner = "Dinesh-cod422";
+      const repoName = "jsonFiles";
+      const filePathInRepo = "dataofMomentsGalleryApp";
+      const githubApiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePathInRepo}`;
+
+      // 1. Get the current file SHA
+      const getRes = await fetch(githubApiUrl, {
+        headers: {
+          Authorization: `Bearer ${GITHUB_TOKEN}`,
+          Accept: "application/vnd.github.v3+json",
+        },
+      });
+
+      if (!getRes.ok) {
+        throw new Error(`Failed to fetch file info from GitHub: ${getRes.statusText}`);
+      }
+
+      const fileData = await getRes.json();
+      const sha = fileData.sha;
+
+      // 2. Encode the new pins array to base64
+      const newContent = JSON.stringify(pins, null, 2);
+      const encodedContent = Buffer.from(newContent).toString("base64");
+
+      // 3. Update the file
+      const putRes = await fetch(githubApiUrl, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${GITHUB_TOKEN}`,
+          Accept: "application/vnd.github.v3+json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: `Auto-add new pin: ${generatedTitle}`,
+          content: encodedContent,
+          sha: sha,
+        }),
+      });
+
+      if (!putRes.ok) {
+        const errorData = await putRes.json().catch(() => ({}));
+        throw new Error(`Failed to update file on GitHub: ${putRes.statusText} - ${JSON.stringify(errorData)}`);
+      }
+
+      console.log("Successfully pushed changes directly to GitHub repository");
     } catch (gitError: any) {
-      console.error("Git error:", gitError);
+      console.error("GitHub API error:", gitError);
       return NextResponse.json(
         { 
           success: true, 
-          message: "Pin saved successfully, but failed to push to Git.",
+          message: "Pin saved successfully locally, but failed to push directly to GitHub.",
           gitError: gitError.message
         },
         { status: 200 }
