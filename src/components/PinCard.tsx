@@ -46,7 +46,7 @@ export default function PinCard({ pin, showTrendingTag = false }: PinCardProps) 
         <div className="w-full relative h-[250px] sm:h-[450px] overflow-hidden pointer-events-none bg-gray-100 dark:bg-black z-0">
           <iframe
             src={getInstagramEmbedUrl(pin.embedUrl)}
-            className="w-[110%] max-w-none border-0 absolute left-[-5%] transition-transform duration-1000 group-hover:scale-[1.05] opacity-90 group-hover:opacity-100"
+            className="w-[110%] max-w-none border-0 absolute left-[-5%] transition-transform duration-1000 group-hover:scale-[1.05] opacity-90 group-hover:opacity-100 pointer-events-none"
             style={{ height: '600px', top: '-60px' }}
             scrolling="no"
             loading="lazy"
