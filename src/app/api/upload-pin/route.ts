@@ -69,6 +69,15 @@ export async function POST(req: Request) {
     const fileContent = await fs.readFile(filePath, "utf8");
     const pins = JSON.parse(fileContent);
 
+    // Prevent duplicate entries
+    const isDuplicate = pins.some((pin: any) => pin.embedUrl === embedUrl);
+    if (isDuplicate) {
+      return NextResponse.json(
+        { error: "This pin has already been uploaded." },
+        { status: 409 }
+      );
+    }
+
     // 1. Auto-generate ID
     let maxId = 0;
     for (const pin of pins) {
