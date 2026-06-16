@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useWishlist } from "@/context/WishlistContext";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 
 export default function MobileNavbar() {
@@ -14,7 +14,13 @@ export default function MobileNavbar() {
 
   useEffect(() => setMounted(true), []);
 
-  const navItems = [
+  const navItems: {
+    name: string;
+    href: string;
+    icon: React.ReactNode;
+    hasBadge?: boolean;
+    isAction?: boolean;
+  }[] = [
     {
       name: "Home",
       href: "/",
