@@ -85,7 +85,7 @@ export default async function ExplorePage(props: {
         <div className="columns-2 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-3 sm:gap-6 lg:gap-8 mx-auto space-y-3 sm:space-y-6">
           {pins.map((pin, index) => (
             <div key={pin.id} className="animate-fade-in-up" style={{ animationDelay: `${(index % 10) * 100 + 100}ms` }}>
-              <PinCard pin={pin} showTrendingTag={pin.Tstatus === "Trending"} />
+              <PinCard pin={pin} showTrendingTag={true} />
             </div>
           ))}
         </div>

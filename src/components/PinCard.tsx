@@ -56,16 +56,34 @@ export default function PinCard({ pin, showTrendingTag = false }: PinCardProps) 
         <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       </Link>
 
-      {/* Trending Tag Overlay */}
-      {showTrendingTag && (
+      {/* Status Tag Overlay */}
+      {showTrendingTag && pin.Tstatus && (
         <div className="absolute top-4 left-4 z-20 pointer-events-none">
-          <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 text-white text-[10px] sm:text-xs font-black tracking-widest uppercase px-3 py-1.5 rounded-full shadow-[0_0_15px_rgba(245,158,11,0.5)] border border-white/20 backdrop-blur-md flex items-center gap-1.5 animate-fade-in">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="animate-pulse">
-              <path d="M17.5 19c-2.4 0-4.5-1.5-5.5-3.5-1 2-3.1 3.5-5.5 3.5-3.6 0-6.5-2.9-6.5-6.5 0-4.6 6.5-11 12-12.5 5.5 1.5 12 7.9 12 12.5 0 3.6-2.9 6.5-6.5 6.5zM12 4.2c-4 1.5-9 6.6-9 8.3 0 2.2 1.8 4 4 4 1.5 0 2.9-1.1 3.5-2.5h3c.6 1.4 2 2.5 3.5 2.5 2.2 0 4-1.8 4-4 0-1.7-5-6.8-9-8.3z"></path>
-              <path fill="currentColor" d="M12 10.5c-.8 0-1.5.7-1.5 1.5s.7 1.5 1.5 1.5 1.5-.7 1.5-1.5-.7-1.5-1.5-1.5z"></path>
-            </svg>
-            {pin.TrendingPosition ? `#${pin.TrendingPosition} Trending` : 'Trending'}
-          </div>
+          {pin.Tstatus === 'Trending' && (
+            <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 text-white text-[10px] sm:text-xs font-black tracking-widest uppercase px-3 py-1.5 rounded-full shadow-[0_0_15px_rgba(245,158,11,0.5)] border border-white/20 backdrop-blur-md flex items-center gap-1.5 animate-fade-in">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="animate-pulse">
+                <path d="M17.5 19c-2.4 0-4.5-1.5-5.5-3.5-1 2-3.1 3.5-5.5 3.5-3.6 0-6.5-2.9-6.5-6.5 0-4.6 6.5-11 12-12.5 5.5 1.5 12 7.9 12 12.5 0 3.6-2.9 6.5-6.5 6.5zM12 4.2c-4 1.5-9 6.6-9 8.3 0 2.2 1.8 4 4 4 1.5 0 2.9-1.1 3.5-2.5h3c.6 1.4 2 2.5 3.5 2.5 2.2 0 4-1.8 4-4 0-1.7-5-6.8-9-8.3z"></path>
+                <path fill="currentColor" d="M12 10.5c-.8 0-1.5.7-1.5 1.5s.7 1.5 1.5 1.5 1.5-.7 1.5-1.5-.7-1.5-1.5-1.5z"></path>
+              </svg>
+              {pin.TrendingPosition ? `#${pin.TrendingPosition} Trending` : 'Trending'}
+            </div>
+          )}
+          {pin.Tstatus === 'Popular' && (
+            <div className="bg-gradient-to-r from-purple-500 via-fuchsia-500 to-pink-500 text-white text-[10px] sm:text-xs font-black tracking-widest uppercase px-3 py-1.5 rounded-full shadow-[0_0_15px_rgba(168,85,247,0.5)] border border-white/20 backdrop-blur-md flex items-center gap-1.5 animate-fade-in">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="animate-pulse">
+                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
+              </svg>
+              Popular
+            </div>
+          )}
+          {pin.Tstatus === 'New' && (
+            <div className="bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500 text-white text-[10px] sm:text-xs font-black tracking-widest uppercase px-3 py-1.5 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.5)] border border-white/20 backdrop-blur-md flex items-center gap-1.5 animate-fade-in">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="animate-pulse">
+                <path d="M12 2l2.4 7.6 7.6 2.4-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4L12 2z"></path>
+              </svg>
+              New
+            </div>
+          )}
         </div>
       )}
 
