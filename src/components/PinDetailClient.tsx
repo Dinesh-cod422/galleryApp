@@ -3,11 +3,11 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { type Pin } from "@/data/mock-pins";
-import { getInstagramEmbedUrl } from "@/components/PinCard";
+import PinCard, { getInstagramEmbedUrl } from "@/components/PinCard";
 import Header from "@/components/Header";
 import { useWishlist } from "@/context/WishlistContext";
 
-export default function PinDetailClient({ pin }: { pin: Pin | null }) {
+export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | null, relatedPins?: Pin[] }) {
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedPrompt, setCopiedPrompt] = useState(false);
   const [isPromptExpanded, setIsPromptExpanded] = useState(false);
@@ -34,13 +34,31 @@ export default function PinDetailClient({ pin }: { pin: Pin | null }) {
 
   const isLiked = mounted ? isInWishlist(pin.id) : false;
 
-  const copyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 2000);
-    } catch (err) {
-      console.error("Failed to copy link", err);
+  const shareLink = async () => {
+    const shareData = {
+      title: pin?.title || "Moments Gallari",
+      text: "Check out this beautiful AI prompt setup!",
+      url: window.location.href,
+    };
+
+    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        // Ignore AbortError when the user cancels the share dialog
+        if ((err as Error).name !== 'AbortError') {
+          console.error("Error sharing", err);
+        }
+      }
+    } else {
+      // Fallback to copy link if sharing is not supported
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        setCopiedLink(true);
+        setTimeout(() => setCopiedLink(false), 2000);
+      } catch (err) {
+        console.error("Failed to copy link", err);
+      }
     }
   };
 
@@ -80,7 +98,7 @@ export default function PinDetailClient({ pin }: { pin: Pin | null }) {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#000000] dark:text-white pb-20 selection:bg-black/10 dark:selection:bg-white/30 relative overflow-x-hidden transition-colors duration-300">
+    <main className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#000000] dark:text-white pb-32 sm:pb-20 selection:bg-black/10 dark:selection:bg-white/30 relative overflow-x-hidden transition-colors duration-300">
       {/* Schema Markup for ImageObject */}
       <script
         type="application/ld+json"
@@ -96,7 +114,7 @@ export default function PinDetailClient({ pin }: { pin: Pin | null }) {
       <Header />
 
       {/* Main Content Area */}
-      <div className="max-w-6xl mx-auto pt-24 md:pt-28 px-4 sm:px-6 relative z-10">
+      <div className="max-w-6xl mx-auto pt-6 sm:pt-24 md:pt-28 px-4 sm:px-6 relative z-10">
 
         {/* Back navigation */}
         <Link href="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white transition-all group mb-8">
@@ -189,7 +207,7 @@ export default function PinDetailClient({ pin }: { pin: Pin | null }) {
               </button>
 
               <button
-                onClick={copyLink}
+                onClick={shareLink}
                 className="flex-1 min-w-0 sm:min-w-[200px] flex items-center justify-center gap-2 sm:gap-3 bg-white dark:bg-[#1a1a1a] text-black dark:text-white font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-full hover:bg-gray-100 dark:hover:bg-[#2a2a2a] transition-all border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 shadow-sm text-sm sm:text-base"
               >
                 {copiedLink ? "Link Copied!" : "Share Link"}
@@ -197,6 +215,22 @@ export default function PinDetailClient({ pin }: { pin: Pin | null }) {
             </div>
           </div>
         </div>
+
+        {/* Related Pins Section */}
+        {relatedPins && relatedPins.length > 0 && (
+          <div className="mt-20 md:mt-32 pt-10 border-t border-black/10 dark:border-white/10 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">More Like This</h2>
+            </div>
+            
+            <div className="columns-2 sm:columns-2 lg:columns-3 gap-3 sm:gap-6 lg:gap-8 space-y-3 sm:space-y-6 lg:space-y-8">
+              {relatedPins.map((relatedPin) => (
+                <PinCard key={relatedPin.id} pin={relatedPin} />
+              ))}
+            </div>
+          </div>
+        )}
+
       </div>
     </main>
   );

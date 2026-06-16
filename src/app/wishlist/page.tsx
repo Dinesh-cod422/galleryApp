@@ -16,7 +16,7 @@ export default function WishlistPage() {
     <main className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#000000] dark:text-white selection:bg-black/10 dark:selection:bg-white/30 relative overflow-x-hidden transition-colors duration-300">
       <Header />
 
-      <div className="relative z-10 px-4 sm:px-6 pt-32 pb-24 max-w-[2200px] mx-auto min-h-screen">
+      <div className="relative z-10 px-4 sm:px-6 pt-12 sm:pt-32 pb-32 sm:pb-24 max-w-[2200px] mx-auto min-h-screen">
         <div className="mb-12 flex flex-col items-center justify-center text-center animate-fade-in-up">
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">Your Saved Gallery</h1>
           <p className="text-gray-500 dark:text-gray-400 max-w-lg mx-auto">
@@ -47,7 +47,7 @@ export default function WishlistPage() {
             </Link>
           </div>
         ) : (
-          <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-6 sm:gap-8 mx-auto">
+          <div className="columns-2 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-3 sm:gap-6 lg:gap-8 mx-auto space-y-3 sm:space-y-6">
             {wishlist.map((pin, index) => (
               <div key={pin.id} className="animate-fade-in-up" style={{ animationDelay: `${(index % 10) * 100}ms` }}>
                 <PinCard pin={pin} />

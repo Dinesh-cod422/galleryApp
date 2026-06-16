@@ -21,6 +21,8 @@ export const viewport: Viewport = {
   ],
   width: "device-width",
   initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export const metadata: Metadata = {
@@ -69,10 +71,16 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Moments Gallari",
+  },
 };
 
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { WishlistProvider } from "@/context/WishlistContext";
+import MobileNavbar from "@/components/MobileNavbar";
 
 export default function RootLayout({
   children,
@@ -85,10 +93,11 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-white text-black dark:bg-[#000000] dark:text-white transition-colors duration-300">
+      <body className="min-h-full flex flex-col bg-white text-black dark:bg-[#000000] dark:text-white transition-colors duration-300 overscroll-none select-none touch-manipulation">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <WishlistProvider>
             {children}
+            <MobileNavbar />
           </WishlistProvider>
         </ThemeProvider>
       </body>

@@ -49,7 +49,7 @@ export default function Header() {
   useEffect(() => setMounted(true), []);
 
   return (
-    <header className="fixed top-0 w-full z-50 glass-panel py-3 px-4 sm:px-6 flex items-center justify-between gap-3 sm:gap-4 flex-wrap sm:flex-nowrap transition-all duration-300 border-b border-black/10 dark:border-white/5 bg-white/70 dark:bg-black/60 backdrop-blur-xl">
+    <header className="hidden sm:flex fixed top-0 w-full z-50 glass-panel py-3 px-4 sm:px-6 items-center justify-between gap-3 sm:gap-4 flex-wrap sm:flex-nowrap transition-all duration-300 border-b border-black/10 dark:border-white/5 bg-white/70 dark:bg-black/60 backdrop-blur-xl">
       <div className="flex items-center gap-6">
         {/* Minimalist Logo */}
         <Link href="/" className="flex items-center gap-3 group cursor-pointer">

@@ -48,14 +48,14 @@ export default async function Home() {
 
       <Header />
 
-      <div className="relative z-10 px-4 sm:px-6 pt-32 pb-4 max-w-[2200px] mx-auto">
+      <div className="relative z-10 px-4 sm:px-6 pt-8 sm:pt-32 pb-4 max-w-[2200px] mx-auto">
         <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-2">Trending Designs</h1>
         <p className="text-gray-500 dark:text-gray-400 text-lg">A curated selection of the most popular aesthetic prompts.</p>
       </div>
 
       {/* Masonry Grid Layout */}
-      <div className="relative z-10 px-4 sm:px-6 pt-8 pb-12 max-w-[2200px] mx-auto">
-        <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-6 sm:gap-8 mx-auto">
+      <div className="relative z-10 px-4 sm:px-6 pt-8 pb-28 sm:pb-12 max-w-[2200px] mx-auto">
+        <div className="columns-2 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-3 sm:gap-6 lg:gap-8 mx-auto space-y-3 sm:space-y-6">
           {trendingPins.map((pin, index) => (
             <div key={pin.id} className="animate-fade-in-up" style={{ animationDelay: `${(index % 10) * 100 + 100}ms` }}>
               <PinCard pin={pin} showTrendingTag={true} />

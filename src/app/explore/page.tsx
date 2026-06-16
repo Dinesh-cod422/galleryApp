@@ -75,14 +75,14 @@ export default async function ExplorePage(props: {
 
       <Header />
 
-      <div className="relative z-10 px-4 sm:px-6 pt-32 max-w-[2200px] mx-auto">
+      <div className="relative z-10 px-4 sm:px-6 pt-8 sm:pt-32 max-w-[2200px] mx-auto">
         <h1 className="text-3xl font-bold mb-4">Explore Gallery</h1>
         <CategoryFilter />
       </div>
 
       {/* Masonry Grid Layout */}
-      <div className="relative z-10 px-4 sm:px-6 pt-4 pb-24 max-w-[2200px] mx-auto min-h-screen">
-        <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-6 sm:gap-8 mx-auto">
+      <div className="relative z-10 px-4 sm:px-6 pt-4 pb-32 sm:pb-24 max-w-[2200px] mx-auto min-h-screen">
+        <div className="columns-2 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-3 sm:gap-6 lg:gap-8 mx-auto space-y-3 sm:space-y-6">
           {pins.map((pin, index) => (
             <div key={pin.id} className="animate-fade-in-up" style={{ animationDelay: `${(index % 10) * 100 + 100}ms` }}>
               <PinCard pin={pin} showTrendingTag={pin.Tstatus === "Trending"} />

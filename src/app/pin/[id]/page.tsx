@@ -56,5 +56,22 @@ export default async function PinDetailPage({ params }: { params: Promise<{ id: 
   const pins = await getPins();
   const pin = pins.find(p => p.id === resolvedParams.id) || null;
 
-  return <PinDetailClient pin={pin} />;
+  // Find related pins
+  let relatedPins: typeof pins = [];
+  if (pin) {
+    // 1. Try finding pins with overlapping filters
+    relatedPins = pins
+      .filter(p => p.id !== pin.id && p.filter?.some(f => pin.filter?.includes(f)))
+      .slice(0, 12);
+    
+    // 2. If we don't have enough related pins, fill with random or trending pins
+    if (relatedPins.length < 12) {
+      const remaining = pins
+        .filter(p => p.id !== pin.id && !relatedPins.some(rp => rp.id === p.id))
+        .slice(0, 12 - relatedPins.length);
+      relatedPins = [...relatedPins, ...remaining];
+    }
+  }
+
+  return <PinDetailClient pin={pin} relatedPins={relatedPins} />;
 }

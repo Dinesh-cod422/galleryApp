@@ -43,7 +43,7 @@ export default function PinCard({ pin, showTrendingTag = false }: PinCardProps) 
         {/* Subtle inner noise/glow texture overlay */}
         <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-black/5 dark:from-white/10 via-transparent to-transparent transition-opacity duration-700 pointer-events-none" />
 
-        <div className="w-full relative h-[450px] overflow-hidden pointer-events-none bg-gray-100 dark:bg-black z-0">
+        <div className="w-full relative h-[250px] sm:h-[450px] overflow-hidden pointer-events-none bg-gray-100 dark:bg-black z-0">
           <iframe
             src={getInstagramEmbedUrl(pin.embedUrl)}
             className="w-[110%] max-w-none border-0 absolute left-[-5%] transition-transform duration-1000 group-hover:scale-[1.05] opacity-90 group-hover:opacity-100"
