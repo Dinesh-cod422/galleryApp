@@ -128,8 +128,12 @@ export async function POST(req: Request) {
     // Prepend the new pin to the array
     pins.unshift(newPin);
 
-    // Write the updated pins back to the file
-    await fs.writeFile(filePath, JSON.stringify(pins, null, 2), "utf8");
+    // Write the updated pins back to the file (this will fail in production like Vercel due to read-only file system)
+    try {
+      await fs.writeFile(filePath, JSON.stringify(pins, null, 2), "utf8");
+    } catch (writeError) {
+      console.warn("Could not write locally (expected in production):", writeError);
+    }
 
     // Push directly to GitHub repository using REST API
     try {

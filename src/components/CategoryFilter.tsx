@@ -5,6 +5,9 @@ import { Suspense } from "react";
 
 const CATEGORIES = [
   "All",
+  "New",
+  "Popular",
+  "Trending",
   "Women's",
   "Men's",
   "Love",

@@ -6,9 +6,9 @@ import Link from "next/link";
 export default async function Home() {
   const allPins = await getPins();
   
-  // Filter by Trending and sort by TrendingPosition (ascending)
+  // Filter by Trending, Popular, and New, and sort by TrendingPosition (ascending)
   let trendingPins = allPins
-    .filter(pin => pin.Tstatus === "Trending")
+    .filter(pin => pin.Tstatus === "Trending" || pin.Tstatus === "Popular" || pin.Tstatus === "New")
     .sort((a, b) => (a.TrendingPosition ?? 999) - (b.TrendingPosition ?? 999));
   
   // Fallback just in case GitHub pins.json doesn't have Tstatus yet

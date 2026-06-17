@@ -35,6 +35,11 @@ export default async function ExplorePage(props: {
       if (pin.filter && pin.filter.some(f => f.toLowerCase() === category.toLowerCase())) {
         return true;
       }
+
+      // Handle Tstatus based categories
+      if (category === "new" && pin.Tstatus === "New") return true;
+      if (category === "popular" && pin.Tstatus === "Popular") return true;
+      if (category === "trending" && pin.Tstatus === "Trending") return true;
       
       // Smart fallback for specific categories
       const text = (pin.title + ' ' + pin.prompt).toLowerCase();
