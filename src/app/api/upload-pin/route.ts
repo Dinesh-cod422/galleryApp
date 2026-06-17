@@ -65,9 +65,51 @@ export async function POST(req: Request) {
       );
     }
 
-    const filePath = path.join(process.cwd(), "public", "pins.json");
-    const fileContent = await fs.readFile(filePath, "utf8");
-    const pins = JSON.parse(fileContent);
+    const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+    const repoOwner = "Dinesh-cod422";
+    const repoName = "jsonFiles";
+    const filePathInRepo = "dataofMomentsGalleryApp";
+    const githubApiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePathInRepo}`;
+
+    let pins: any[] = [];
+    let sha = "";
+
+    // 1. Fetch current data from GitHub to avoid overwriting existing new data
+    if (GITHUB_TOKEN) {
+      try {
+        const getRes = await fetch(githubApiUrl, {
+          headers: {
+            Authorization: `Bearer ${GITHUB_TOKEN}`,
+            Accept: "application/vnd.github.v3+json",
+          },
+          cache: "no-store",
+        });
+
+        if (getRes.ok) {
+          const fileData = await getRes.json();
+          sha = fileData.sha;
+          if (fileData.content) {
+            const decodedContent = Buffer.from(fileData.content, "base64").toString("utf8");
+            pins = JSON.parse(decodedContent);
+          }
+        } else {
+          console.warn(`Failed to fetch file info from GitHub: ${getRes.statusText}`);
+        }
+      } catch (err) {
+        console.error("Error fetching data from GitHub:", err);
+      }
+    }
+
+    // 2. Fallback to local file if GitHub fetch failed or returned empty
+    if (pins.length === 0) {
+      try {
+        const filePath = path.join(process.cwd(), "public", "pins.json");
+        const fileContent = await fs.readFile(filePath, "utf8");
+        pins = JSON.parse(fileContent);
+      } catch (err) {
+        console.error("Error reading local pins.json:", err);
+      }
+    }
 
     // Prevent duplicate entries
     const isDuplicate = pins.some((pin: any) => pin.embedUrl === embedUrl);
@@ -78,7 +120,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // 1. Auto-generate ID
+    // 3. Auto-generate ID
     let maxId = 0;
     for (const pin of pins) {
       const pinId = parseInt(pin.id, 10);
@@ -88,18 +130,18 @@ export async function POST(req: Request) {
     }
     const newId = (maxId + 1).toString();
 
-    // 2. Auto-generate Title
+    // 4. Auto-generate Title
     const generatedTitle = generateTitle(prompt);
 
-    // 3. Auto-generate Image URL (random from 1 to 10)
+    // 5. Auto-generate Image URL (random from 1 to 10)
     const randomImgId = Math.floor(Math.random() * 10) + 1;
     const generatedImageUrl = `/pins/${randomImgId}.webp`;
 
-    // 4. Auto-generate Author
+    // 6. Auto-generate Author
     const authors = ["CinematicArt", "AestheticVibes", "PremiumGallery", "CreativeStudio", "ArtisticSoul", "LoveArt"];
     const generatedAuthor = authors[Math.floor(Math.random() * authors.length)];
 
-    // 5. Auto-generate Avatar URL
+    // 7. Auto-generate Avatar URL
     const gender = Math.random() > 0.5 ? "women" : "men";
     const avatarId = Math.floor(Math.random() * 90) + 1;
     const generatedAvatarUrl = `https://randomuser.me/api/portraits/${gender}/${avatarId}.jpg`;
@@ -128,75 +170,53 @@ export async function POST(req: Request) {
     // Prepend the new pin to the array
     pins.unshift(newPin);
 
-    // Write the updated pins back to the file (this will fail in production like Vercel due to read-only file system)
+    // Write the updated pins back to the local file (this will fail in production like Vercel due to read-only file system)
     try {
+      const filePath = path.join(process.cwd(), "public", "pins.json");
       await fs.writeFile(filePath, JSON.stringify(pins, null, 2), "utf8");
     } catch (writeError) {
       console.warn("Could not write locally (expected in production):", writeError);
     }
 
     // Push directly to GitHub repository using REST API
-    try {
-      const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-      if (!GITHUB_TOKEN) {
-        throw new Error("GITHUB_TOKEN is not set in environment variables");
+    if (GITHUB_TOKEN) {
+      try {
+        const newContent = JSON.stringify(pins, null, 2);
+        const encodedContent = Buffer.from(newContent).toString("base64");
+
+        const putRes = await fetch(githubApiUrl, {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${GITHUB_TOKEN}`,
+            Accept: "application/vnd.github.v3+json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: `Auto-add new pin: ${generatedTitle}`,
+            content: encodedContent,
+            sha: sha, // Include the sha we fetched earlier to update the file
+          }),
+        });
+
+        if (!putRes.ok) {
+          const errorData = await putRes.json().catch(() => ({}));
+          throw new Error(`Failed to update file on GitHub: ${putRes.statusText} - ${JSON.stringify(errorData)}`);
+        }
+
+        console.log("Successfully pushed changes directly to GitHub repository");
+      } catch (gitError: any) {
+        console.error("GitHub API error:", gitError);
+        return NextResponse.json(
+          { 
+            success: true, 
+            message: "Pin saved successfully locally, but failed to push directly to GitHub.",
+            gitError: gitError.message
+          },
+          { status: 200 }
+        );
       }
-
-      const repoOwner = "Dinesh-cod422";
-      const repoName = "jsonFiles";
-      const filePathInRepo = "dataofMomentsGalleryApp";
-      const githubApiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePathInRepo}`;
-
-      // 1. Get the current file SHA
-      const getRes = await fetch(githubApiUrl, {
-        headers: {
-          Authorization: `Bearer ${GITHUB_TOKEN}`,
-          Accept: "application/vnd.github.v3+json",
-        },
-      });
-
-      if (!getRes.ok) {
-        throw new Error(`Failed to fetch file info from GitHub: ${getRes.statusText}`);
-      }
-
-      const fileData = await getRes.json();
-      const sha = fileData.sha;
-
-      // 2. Encode the new pins array to base64
-      const newContent = JSON.stringify(pins, null, 2);
-      const encodedContent = Buffer.from(newContent).toString("base64");
-
-      // 3. Update the file
-      const putRes = await fetch(githubApiUrl, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${GITHUB_TOKEN}`,
-          Accept: "application/vnd.github.v3+json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: `Auto-add new pin: ${generatedTitle}`,
-          content: encodedContent,
-          sha: sha,
-        }),
-      });
-
-      if (!putRes.ok) {
-        const errorData = await putRes.json().catch(() => ({}));
-        throw new Error(`Failed to update file on GitHub: ${putRes.statusText} - ${JSON.stringify(errorData)}`);
-      }
-
-      console.log("Successfully pushed changes directly to GitHub repository");
-    } catch (gitError: any) {
-      console.error("GitHub API error:", gitError);
-      return NextResponse.json(
-        { 
-          success: true, 
-          message: "Pin saved successfully locally, but failed to push directly to GitHub.",
-          gitError: gitError.message
-        },
-        { status: 200 }
-      );
+    } else {
+      console.warn("GITHUB_TOKEN not found, skipping GitHub push.");
     }
 
     return NextResponse.json({ success: true, pin: newPin });
