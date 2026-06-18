@@ -197,6 +197,7 @@ export default function UploadPage() {
                   <option value="Trending">Trending</option>
                   <option value="New">New</option>
                   <option value="Popular">Popular</option>
+                  <option value="Normal">Normal</option>
                 </select>
               </div>
             </div>
