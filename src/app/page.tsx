@@ -72,6 +72,17 @@ export default async function Home() {
             </svg>
           </Link>
         </div>
+
+        {/* SEO & Context Block for AdSense / Search Engines */}
+        <section className="mt-24 mb-12 max-w-4xl mx-auto bg-white/50 dark:bg-gray-900/30 p-8 rounded-3xl border border-gray-200 dark:border-gray-800 backdrop-blur-sm">
+          <h2 className="text-3xl font-bold mb-4">What is Moments Gallari?</h2>
+          <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+            Moments Gallari is your ultimate destination for high-quality, professional AI image generation prompts. In the rapidly evolving world of artificial intelligence, achieving the perfect aesthetic often requires the perfect words. We meticulously curate the most stunning, cinematic, and photorealistic AI designs across the web and provide you with the exact text prompts used to create them.
+          </p>
+          <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+            Whether you are using Midjourney, Stable Diffusion, DALL-E, or any other advanced AI image generator, our gallery is designed to be your primary source of inspiration. Simply explore our categories, copy the provided premium prompts, and use them to jumpstart your own creative workflow. Discover the secrets behind viral Instagram aesthetics, luxury photography styles, and breathtaking digital art right here.
+          </p>
+        </section>
       </div>
     </main>
   );

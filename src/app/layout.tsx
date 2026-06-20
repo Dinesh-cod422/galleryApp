@@ -43,6 +43,9 @@ export const metadata: Metadata = {
     "Design Prompts",
     "Creative Prompts"
   ],
+  other: {
+    "google-adsense-account": "ca-pub-7320845599419472"
+  },
   metadataBase: new URL("https://moment-galleri.vercel.app"),
   alternates: {
     canonical: "/",
@@ -81,6 +84,8 @@ export const metadata: Metadata = {
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { WishlistProvider } from "@/context/WishlistContext";
 import MobileNavbar from "@/components/MobileNavbar";
+import Footer from "@/components/Footer";
+import CookieConsent from "@/components/CookieConsent";
 
 export default function RootLayout({
   children,
@@ -97,7 +102,9 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <WishlistProvider>
             {children}
+            <Footer />
             <MobileNavbar />
+            <CookieConsent />
           </WishlistProvider>
         </ThemeProvider>
       </body>
