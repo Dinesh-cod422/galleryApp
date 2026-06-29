@@ -1,5 +1,6 @@
 import { getPins } from "@/data/mock-pins";
 import PinDetailClient from "@/components/PinDetailClient";
+import { getPinContent } from "@/lib/pinContent";
 import type { Metadata } from "next";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
@@ -14,16 +15,18 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     };
   }
 
+  const content = getPinContent(pin);
+
   // Create a clean summary from the prompt
   const cleanDescription = pin.prompt.length > 155
     ? `${pin.prompt.slice(0, 152)}...`
     : pin.prompt;
 
   return {
-    title: `${pin.title} | AI Prompt Design`,
-    description: `Aesthetic Prompt: "${cleanDescription}" by ${pin.author}. Get high-quality custom AI image generator prompt setups.`,
+    title: `${content.displayTitle} | AI Prompt Design`,
+    description: `${content.displayTitle} — ${content.summary} Prompt curated by ${pin.author}.`,
     keywords: [
-      pin.title.toLowerCase(),
+      content.displayTitle.toLowerCase(),
       ...(pin.filter || []).map(f => f.toLowerCase()),
       "moments gallari",
       "ai art design",
@@ -31,7 +34,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       "copy ai prompt"
     ],
     openGraph: {
-      title: `${pin.title} - Moments Gallari`,
+      title: `${content.displayTitle} - Moments Gallari`,
       description: `Copy prompt: "${cleanDescription}"`,
       type: "article",
       images: [
@@ -39,13 +42,13 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
           url: pin.imageUrl,
           width: 800,
           height: 1000,
-          alt: pin.title,
+          alt: content.displayTitle,
         }
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${pin.title} - Moments Gallari`,
+      title: `${content.displayTitle} - Moments Gallari`,
       description: `Copy prompt: "${cleanDescription}"`,
     }
   };

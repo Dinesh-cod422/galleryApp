@@ -63,6 +63,7 @@ export default function Header() {
         
         <nav className="flex gap-1 ml-2 sm:ml-4 font-medium text-sm">
           <Link href="/explore" className="bg-black/5 dark:bg-white/10 text-black dark:text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-full hover:bg-black/10 dark:hover:bg-white/20 transition-all border border-transparent dark:border-white/5 shadow-sm dark:shadow-[0_0_15px_rgba(255,255,255,0.05)]">Explore</Link>
+          <Link href="/guides" className="text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-all">Guides</Link>
         </nav>
       </div>
 

@@ -6,6 +6,7 @@ import { type Pin } from "@/data/mock-pins";
 import PinCard, { getInstagramEmbedUrl } from "@/components/PinCard";
 import Header from "@/components/Header";
 import { useWishlist } from "@/context/WishlistContext";
+import { getPinContent } from "@/lib/pinContent";
 
 export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | null, relatedPins?: Pin[] }) {
   const [copiedLink, setCopiedLink] = useState(false);
@@ -33,6 +34,7 @@ export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | 
   }
 
   const isLiked = mounted ? isInWishlist(pin.id) : false;
+  const content = getPinContent(pin);
 
   const shareLink = async () => {
     const shareData = {
@@ -76,7 +78,7 @@ export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ImageObject",
-    "name": pin.title,
+    "name": content.displayTitle,
     "description": pin.prompt,
     "contentUrl": pin.imageUrl,
     "author": {
@@ -97,12 +99,31 @@ export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | 
     }
   };
 
+  // FAQ structured data — gives search engines rich, unique Q&A content per page.
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": content.faqs.map((faq) => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer,
+      },
+    })),
+  };
+
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#000000] dark:text-white pb-32 sm:pb-20 selection:bg-black/10 dark:selection:bg-white/30 relative overflow-x-hidden transition-colors duration-300">
       {/* Schema Markup for ImageObject */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      {/* Schema Markup for FAQ */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
       {/* Ambient floating orbs background */}
@@ -166,8 +187,23 @@ export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | 
             </div>
 
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 sm:mb-6 tracking-tight leading-tight">
-              {pin.title}
+              {content.displayTitle}
             </h1>
+
+            {/* Tag chips */}
+            {pin.filter && pin.filter.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-6">
+                {pin.filter.map((tag) => (
+                  <Link
+                    key={tag}
+                    href={`/explore?category=${encodeURIComponent(tag.toLowerCase())}`}
+                    className="px-3 py-1 rounded-full text-xs font-semibold bg-black/5 dark:bg-white/5 text-gray-600 dark:text-gray-300 border border-black/5 dark:border-white/10 hover:border-black/20 dark:hover:border-white/30 transition-colors"
+                  >
+                    {tag}
+                  </Link>
+                ))}
+              </div>
+            )}
 
             <div className="w-full h-px bg-gradient-to-r from-black/10 dark:from-white/20 to-transparent mb-8" />
 
@@ -215,6 +251,95 @@ export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | 
             </div>
           </div>
         </div>
+
+        {/* Editorial Content — unique, useful guidance for every prompt */}
+        <article className="mt-20 md:mt-28 pt-12 border-t border-black/10 dark:border-white/10 max-w-3xl">
+          {/* Overview */}
+          <section className="mb-14">
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-5">
+              About this prompt
+            </h2>
+            {content.overview.map((para, i) => (
+              <p key={i} className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4 text-base sm:text-lg">
+                {para}
+              </p>
+            ))}
+          </section>
+
+          {/* How to use */}
+          <section className="mb-14">
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-6">
+              How to use this prompt
+            </h2>
+            <ol className="space-y-5">
+              {content.howToSteps.map((step, i) => (
+                <li key={i} className="flex gap-4">
+                  <span className="shrink-0 w-8 h-8 rounded-full bg-gray-900 text-white dark:bg-white dark:text-black font-bold flex items-center justify-center text-sm">
+                    {i + 1}
+                  </span>
+                  <div>
+                    <h3 className="font-bold text-lg mb-1">{step.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{step.detail}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+
+          {/* Recommended tools + Tips */}
+          <div className="grid sm:grid-cols-2 gap-10 mb-14">
+            <section>
+              <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight mb-5">
+                Recommended AI tools
+              </h2>
+              <ul className="space-y-3">
+                {content.recommendedTools.map((tool, i) => (
+                  <li key={i} className="flex items-start gap-3 text-gray-600 dark:text-gray-300 leading-relaxed">
+                    <span className="shrink-0 mt-2 w-1.5 h-1.5 rounded-full bg-purple-500" />
+                    <span>{tool}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight mb-5">
+                Tips for the best results
+              </h2>
+              <ul className="space-y-3">
+                {content.tips.map((tip, i) => (
+                  <li key={i} className="flex items-start gap-3 text-gray-600 dark:text-gray-300 leading-relaxed">
+                    <span className="shrink-0 mt-2 w-1.5 h-1.5 rounded-full bg-blue-500" />
+                    <span>{tip}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          </div>
+
+          {/* FAQ */}
+          <section className="mb-4">
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-6">
+              Frequently asked questions
+            </h2>
+            <div className="space-y-4">
+              {content.faqs.map((faq, i) => (
+                <div
+                  key={i}
+                  className="bg-white dark:bg-[#0a0a0a] p-5 sm:p-6 rounded-2xl border border-black/5 dark:border-white/10"
+                >
+                  <h3 className="font-bold text-base sm:text-lg mb-2">{faq.question}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{faq.answer}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-8 leading-relaxed">
+            Note: When generating images based on a real person&apos;s photo, only use images you own or
+            have explicit permission to use, and always respect others&apos; likeness and privacy.
+          </p>
+        </article>
 
         {/* Related Pins Section */}
         {relatedPins && relatedPins.length > 0 && (

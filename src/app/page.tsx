@@ -2,6 +2,30 @@ import PinCard from "@/components/PinCard";
 import { getPins } from "@/data/mock-pins";
 import Header from "@/components/Header";
 import Link from "next/link";
+import { guides } from "@/data/guides";
+
+const homeFaqs = [
+  {
+    question: "What is Moments Gallari?",
+    answer:
+      "Moments Gallari is a free, curated gallery of high-quality AI image prompts. Each design comes with the exact text prompt used to create it, so you can copy, customise and recreate the look in your own AI image generator.",
+  },
+  {
+    question: "Are the prompts free to use?",
+    answer:
+      "Yes. Every prompt on the site is free to copy and use in your own AI generations with tools like Midjourney, Stable Diffusion and Google Gemini. We only ask that you respect the rights of any people whose photos you use as a reference.",
+  },
+  {
+    question: "Which AI tools do these prompts work with?",
+    answer:
+      "The prompts are written to be portable across most modern AI image generators, including Midjourney, Stable Diffusion (SDXL), Google Gemini, DALL·E and Flux. Each prompt page suggests the tools best suited to that particular style.",
+  },
+  {
+    question: "Do I need experience to use these prompts?",
+    answer:
+      "Not at all. Beginners can copy a prompt and generate straight away, while our Guides section explains how to write and refine prompts so you can go further. Start with a prompt you like, then tweak the editable parts to make it your own.",
+  },
+];
 
 export default async function Home() {
   const allPins = await getPins();
@@ -38,6 +62,21 @@ export default async function Home() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      {/* Schema Markup for FAQ */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: homeFaqs.map((faq) => ({
+              "@type": "Question",
+              name: faq.question,
+              acceptedAnswer: { "@type": "Answer", text: faq.answer },
+            })),
+          }),
+        }}
       />
       {/* Background ambient glow - Floating Orbs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -82,6 +121,51 @@ export default async function Home() {
           <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
             Whether you are using Midjourney, Stable Diffusion, DALL-E, or any other advanced AI image generator, our gallery is designed to be your primary source of inspiration. Simply explore our categories, copy the provided premium prompts, and use them to jumpstart your own creative workflow. Discover the secrets behind viral Instagram aesthetics, luxury photography styles, and breathtaking digital art right here.
           </p>
+        </section>
+
+        {/* Latest Guides */}
+        <section className="mt-20 mb-12 max-w-5xl mx-auto">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">Learn AI Prompting</h2>
+            <Link href="/guides" className="text-sm font-semibold text-gray-600 dark:text-gray-300 hover:underline">
+              View all guides →
+            </Link>
+          </div>
+          <div className="grid sm:grid-cols-3 gap-5">
+            {guides.slice(0, 3).map((guide) => (
+              <Link
+                key={guide.slug}
+                href={`/guides/${guide.slug}`}
+                className="group p-6 rounded-3xl bg-white dark:bg-[#0a0a0a] border border-black/5 dark:border-white/10 hover:border-black/20 dark:hover:border-white/30 hover:-translate-y-1 transition-all"
+              >
+                <span className="text-xs font-bold uppercase tracking-wide text-purple-600 dark:text-purple-400">
+                  {guide.category}
+                </span>
+                <h3 className="font-extrabold text-lg mt-2 mb-2 leading-snug group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                  {guide.title}
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed line-clamp-3">
+                  {guide.description}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section className="mt-16 mb-12 max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold mb-8 text-center">Frequently Asked Questions</h2>
+          <div className="space-y-4">
+            {homeFaqs.map((faq, i) => (
+              <div
+                key={i}
+                className="bg-white/60 dark:bg-gray-900/30 p-6 rounded-2xl border border-gray-200 dark:border-gray-800 backdrop-blur-sm"
+              >
+                <h3 className="font-bold text-lg mb-2">{faq.question}</h3>
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{faq.answer}</p>
+              </div>
+            ))}
+          </div>
         </section>
       </div>
     </main>

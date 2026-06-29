@@ -28,6 +28,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/guides" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                  Guides
+                </Link>
+              </li>
+              <li>
                 <Link href="/wishlist" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   Wishlist
                 </Link>
