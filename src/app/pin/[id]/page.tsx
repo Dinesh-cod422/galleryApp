@@ -3,6 +3,16 @@ import PinDetailClient from "@/components/PinDetailClient";
 import { getPinContent } from "@/lib/pinContent";
 import type { Metadata } from "next";
 
+// Pre-render every known pin at build time so navigations and prefetches are
+// served from the CDN instead of invoking a server render per request.
+// dynamicParams keeps newly uploaded pins working: they render on first hit.
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  const pins = await getPins();
+  return pins.map((pin) => ({ id: pin.id }));
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const resolvedParams = await params;
   const pins = await getPins();

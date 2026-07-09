@@ -38,7 +38,7 @@ export default function PinCard({ pin, showTrendingTag = false }: PinCardProps) 
 
   return (
     <div className="mb-6 sm:mb-8 break-inside-avoid relative group">
-      <Link href={`/pin/${pin.id}`} className="block relative rounded-[2rem] overflow-hidden cursor-zoom-in bg-white dark:bg-[#0a0a0a] border border-black/5 dark:border-white/5 shadow-xl dark:shadow-2xl hover:shadow-[0_0_30px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_0_40px_rgba(255,255,255,0.15)] hover:border-black/10 dark:hover:border-white/20 hover:-translate-y-2 transition-all duration-700 ease-out">
+      <Link href={`/pin/${pin.id}`} prefetch={false} className="block relative rounded-[2rem] overflow-hidden cursor-zoom-in bg-white dark:bg-[#0a0a0a] border border-black/5 dark:border-white/5 shadow-xl dark:shadow-2xl hover:shadow-[0_0_30px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_0_40px_rgba(255,255,255,0.15)] hover:border-black/10 dark:hover:border-white/20 hover:-translate-y-2 transition-all duration-700 ease-out">
 
         {/* Subtle inner noise/glow texture overlay */}
         <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-black/5 dark:from-white/10 via-transparent to-transparent transition-opacity duration-700 pointer-events-none" />

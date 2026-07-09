@@ -20,13 +20,13 @@ const DATA_URL =
   "https://raw.githubusercontent.com/Dinesh-cod422/jsonFiles/main/dataofMomentsGalleryApp";
 
 export async function getPins(): Promise<Pin[]> {
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === "development") {
     return localPins as Pin[];
   }
 
   try {
     const res = await fetch(DATA_URL, {
-      next: { revalidate: 60 }, // Re-fetch data every 60 seconds (Incremental Static Regeneration)
+      next: { revalidate: 300 }, // Re-fetch data every 5 minutes so new uploads appear quickly
     });
 
     if (!res.ok) {

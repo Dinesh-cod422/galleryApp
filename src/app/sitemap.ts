@@ -4,7 +4,11 @@ import { guides } from '@/data/guides';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://moment-galleri.vercel.app';
-  const now = new Date();
+
+  // Stable, hand-bumped date. Using `new Date()` here would stamp every URL as
+  // "modified just now" on each ISR regeneration, making crawlers recrawl the
+  // entire site continuously. Bump this when content meaningfully changes.
+  const now = new Date('2026-07-09');
 
   // Fetch all dynamic pins to include them in the sitemap
   let pins: Pin[] = [];
