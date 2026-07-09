@@ -1,7 +1,7 @@
 import PinCard from "@/components/PinCard";
 import { getPins } from "@/data/mock-pins";
 import Header from "@/components/Header";
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import { guides } from "@/data/guides";
 
 const homeFaqs = [

@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import type { Pin } from "@/data/mock-pins";
 import { useWishlist } from "@/context/WishlistContext";
 import { useState, useEffect } from "react";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import { type Pin } from "@/data/mock-pins";
 import PinCard, { getInstagramEmbedUrl } from "@/components/PinCard";
 import Header from "@/components/Header";

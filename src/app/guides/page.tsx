@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import { guides } from "@/data/guides";
 import type { Metadata } from "next";
 

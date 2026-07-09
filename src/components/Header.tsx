@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import { useTheme } from "next-themes";
 import { useWishlist } from "@/context/WishlistContext";
 import { useEffect, useState, Suspense } from "react";

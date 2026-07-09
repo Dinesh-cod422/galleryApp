@@ -3,7 +3,7 @@
 import { useWishlist } from "@/context/WishlistContext";
 import PinCard from "@/components/PinCard";
 import Header from "@/components/Header";
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import { useState, useEffect } from "react";
 
 export default function WishlistPage() {
