@@ -16,8 +16,15 @@
  * Deliberately a raw <script> rather than next/script with `beforeInteractive`:
  * that strategy queues the code into `self.__next_s` and emits it *after*
  * </head>, so execution order becomes a property of Next's bootstrap rather than
- * of document parse order. A consent gate must not depend on that. React hoists
- * this into <head>, where it runs synchronously before any tag loads.
+ * of document parse order. A consent gate must not depend on that.
+ *
+ * It is rendered as the first child of <body>, NOT of <html>. A <script> is not
+ * valid as a direct child of <html>: React 19 rejects it with "cannot contain a
+ * nested <script>", a hydration mismatch, and "Cannot render a sync or defer
+ * <script> outside the main document without knowing its order". At the top of
+ * <body> it is valid, runs synchronously during parse, and still precedes both
+ * Google tags — GA and AdSense are afterInteractive, so they execute after
+ * hydration, and only their (non-executing) preload links appear earlier.
  */
 export default function ConsentDefaults() {
   return (

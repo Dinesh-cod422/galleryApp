@@ -95,9 +95,11 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      {/* Must precede GoogleAnalytics and AdSenseScript — see ConsentDefaults. */}
-      <ConsentDefaults />
       <body className="min-h-full flex flex-col bg-white text-black dark:bg-[#000000] dark:text-white transition-colors duration-300 overscroll-none touch-manipulation">
+        {/* First child of <body> on purpose: a <script> is not valid as a direct
+            child of <html>, and this must still run at parse time, before
+            GoogleAnalytics or AdSenseScript execute. See ConsentDefaults. */}
+        <ConsentDefaults />
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <WishlistProvider>
             {children}
