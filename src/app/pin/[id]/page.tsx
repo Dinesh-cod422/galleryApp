@@ -1,7 +1,7 @@
 import { getPins } from "@/data/mock-pins";
 import PinDetailClient from "@/components/PinDetailClient";
 import { getPinContent } from "@/lib/pinContent";
-import { getPinEntry } from "@/data/pin-editorial";
+import { getPinEntry, isFullyDocumented } from "@/data/pin-editorial";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -44,10 +44,18 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     ? `${pin.prompt.slice(0, 152)}...`
     : pin.prompt;
 
+  // A pin page without our own render and our own write-up carries the prompt
+  // plus a short notice — genuine, but not substantial enough to be worth
+  // indexing, and 111 such pages read as scaled thin content. They stay
+  // reachable and usable for visitors; they just do not enter the index until
+  // they are finished. Each pin rejoins the index the moment it is documented.
+  const documented = isFullyDocumented(pin.id);
+
   return {
     title: `${content.displayTitle} | AI Prompt Design`,
     description,
     alternates: { canonical: `/pin/${pin.id}` },
+    ...(documented ? {} : { robots: { index: false, follow: true } }),
     keywords: [
       content.displayTitle.toLowerCase(),
       ...(pin.filter || []).map(f => f.toLowerCase()),

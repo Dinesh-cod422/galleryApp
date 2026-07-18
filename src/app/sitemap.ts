@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 import { getPins, type Pin } from '@/data/mock-pins';
+import { isFullyDocumented } from '@/data/pin-editorial';
 import { guides } from '@/data/guides';
 
 // Regenerate hourly. Without this the sitemap is frozen at the build snapshot —
@@ -24,13 +25,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error('Error loading pins for sitemap:', error);
   }
 
-  // Create sitemap entries for dynamic pins
-  const pinUrls = pins.map((pin) => ({
-    url: `${baseUrl}/pin/${pin.id}`,
-    lastModified: now,
-    changeFrequency: 'weekly' as const,
-    priority: 0.6,
-  }));
+  // Only submit pins we have actually finished. Undocumented pins carry
+  // `noindex` (see pin/[id]/page.tsx), and listing a URL in the sitemap while
+  // telling Google not to index it is a self-contradicting signal that shows up
+  // in Search Console as an error.
+  const pinUrls = pins
+    .filter((pin) => isFullyDocumented(pin.id))
+    .map((pin) => ({
+      url: `${baseUrl}/pin/${pin.id}`,
+      lastModified: now,
+      changeFrequency: 'weekly' as const,
+      priority: 0.6,
+    }));
 
   // Guide article entries
   const guideUrls = guides.map((guide) => ({

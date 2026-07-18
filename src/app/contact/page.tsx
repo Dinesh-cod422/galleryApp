@@ -3,7 +3,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Contact Us",
-  description: "Reach the person who runs Moments Gallari — attribution and takedown requests, prompt corrections, and advertising enquiries.",
+  description: "How to reach Moments Gallari — attribution and takedown requests, corrections, and advertising enquiries.",
   alternates: { canonical: "/contact" },
 };
 
@@ -16,9 +16,9 @@ export default function ContactPage() {
         <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-8">Contact</h1>
 
         <div className="prose prose-lg dark:prose-invert max-w-none">
-          <p>
-            Moments Gallari is run by one person, <strong>[YOUR FULL NAME]</strong>. Email is the
-            fastest way to reach me and I read everything that arrives.
+          <p className="lead">
+            Moments Gallari is run by one person. Email is the only channel, it is
+            read personally, and every message gets a reply.
           </p>
 
           <h2>Email</h2>
@@ -26,30 +26,39 @@ export default function ContactPage() {
             <a href="mailto:dineshkumarmurugesan002@gmail.com" className="break-all">
               dineshkumarmurugesan002@gmail.com
             </a>
-            <br />
-            Typical reply within <strong>[N]</strong> business days.
           </p>
 
-          <h2>Where I&apos;m based</h2>
-          <p>[CITY, COUNTRY]</p>
-
-          <h2>Please get in touch about</h2>
+          <h2>What to write about</h2>
           <ul>
             <li>
-              <strong>Attribution or takedown.</strong> If a prompt listed here originated with you,
-              tell me which page and it will be credited or removed.
+              <strong>Attribution or takedown.</strong> If a prompt published here
+              originated with you, name the page and it will be credited or removed.
             </li>
             <li>
-              <strong>A prompt that isn&apos;t working.</strong> Send the model and settings you used
-              and I&apos;ll re-test it and update the page.
+              <strong>A prompt that isn&apos;t working.</strong> Tell us the model and
+              settings you used and we will re-test it and update the page.
             </li>
             <li>
-              <strong>Corrections.</strong> If something on a page is wrong, I want to know.
+              <strong>Corrections.</strong> If anything on a page is wrong or out of
+              date, we want to know.
             </li>
             <li>
               <strong>Advertising and partnership enquiries.</strong>
             </li>
           </ul>
+
+          <h2>Also here</h2>
+          <p>
+            The prompts are posted first on Instagram at{" "}
+            <a
+              href="https://www.instagram.com/moments_galleri"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              @moments_galleri
+            </a>
+            . Messages sent there are seen less often than email.
+          </p>
         </div>
       </div>
     </main>

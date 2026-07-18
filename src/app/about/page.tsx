@@ -3,10 +3,21 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "About Us",
-  description: "Who runs Moments Gallari, where the prompts come from, and how every prompt is tested before it is published.",
+  description: "Who runs Moments Gallari, where the prompts come from, and how the collection is put together.",
   alternates: { canonical: "/about" },
 };
 
+/**
+ * NOTE ON E-E-A-T: this page deliberately contains no placeholders and invents
+ * nothing — no team, no company, no city, no founding year. Everything asserted
+ * here is verifiable: the Instagram account, the contact address, and the nature
+ * of the collection.
+ *
+ * Adding a real full name and location would strengthen the page further, and is
+ * worth doing. Do NOT substitute an invented one: fabricated identity is what the
+ * old `author`/avatar system did, and it is a Publisher Policies
+ * "Misrepresentation" issue rather than merely a quality one.
+ */
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#000000] dark:text-white selection:bg-black/10 dark:selection:bg-white/30 relative overflow-x-hidden transition-colors duration-300">
@@ -17,68 +28,77 @@ export default function AboutPage() {
 
         <div className="prose prose-lg dark:prose-invert max-w-none">
           <p className="lead">
-            Moments Gallari is a small, independently run library of AI image prompts. Every prompt
-            here is run through real image generators before publication, and every page shows the
-            results — including the ones that didn&apos;t work.
+            Moments Gallari is a small, independently run library of AI image
+            prompts. It is not a company and not a team — it is one person
+            publishing the prompts behind images they make.
           </p>
-
-          <h2>Who runs this</h2>
-          <p>
-            My name is <strong>[YOUR FULL NAME]</strong>. I&apos;m <strong>[YOUR ROLE]</strong> based
-            in <strong>[CITY, COUNTRY]</strong>, and I&apos;ve been working with AI image generation
-            since <strong>[YEAR]</strong>. I build and write every page on this site myself. You can
-            reach me at{" "}
-            <a href="mailto:dineshkumarmurugesan002@gmail.com" className="break-all">
-              dineshkumarmurugesan002@gmail.com
-            </a>
-            .
-          </p>
-
-          <h2>What we actually do</h2>
-          <p>
-            Most prompt collections are lists — copied, posted, never tested. That was true of the
-            first version of this site, and it&apos;s why it was rebuilt. For each prompt we publish now:
-          </p>
-          <ul>
-            <li>We run it ourselves and record the model and settings used.</li>
-            <li>We publish <strong>our own</strong> generated images, so you can see what the prompt really produces.</li>
-            <li>
-              We document where it fails — contradictory instructions, tokens that do nothing, and
-              the parts that need rewriting for a particular model.
-            </li>
-            <li>We publish specific, tested edits rather than generic advice.</li>
-          </ul>
 
           <h2>Where the prompts come from</h2>
           <p>
-            The prompts and reference images here were published on our own Instagram account,{" "}
-            <a href="https://www.instagram.com/moments_galleri" rel="noopener noreferrer" target="_blank">
+            Every prompt on this site was written and first published by us on our
+            own Instagram account,{" "}
+            <a
+              href="https://www.instagram.com/moments_galleri"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               @moments_galleri
             </a>
-            , and each page links back to the original post. Prompts are short functional text and we
-            make no ownership claim over them. If a prompt listed here originated with you, email me
-            and it will be credited or removed within <strong>[N]</strong> business days.
+            . Each prompt page links back to the original post, and the post is
+            embedded there in full with its caption intact.
+          </p>
+          <p>
+            Nothing here is scraped from other people. If you believe a prompt
+            listed here originated with you, email us and it will be credited or
+            removed.
+          </p>
+
+          <h2>How to read a prompt page</h2>
+          <p>
+            Each page carries the complete prompt text, free to copy and adapt, plus
+            the tags describing the style it produces. Prompts are functional text
+            rather than creative work and we make no ownership claim over them —
+            take them, change them, use them commercially if you like.
+          </p>
+          <p>
+            We are currently working through the collection and adding, for each
+            prompt, our own generated image and a written account of what the prompt
+            actually produced — including the parts that failed and the specific
+            edits that fixed them. Pages that have not reached that stage say so
+            plainly rather than padding the space with filler.
+          </p>
+
+          <h2>The images are AI-generated</h2>
+          <p>
+            Every image associated with this site is generated by an AI image model.
+            None of it is photography, and none of it depicts real events. Where a
+            prompt is designed around a reference photograph, we ask that you only
+            use photographs you own or have permission to use.
           </p>
 
           <h2>What we don&apos;t do</h2>
           <p>
-            We don&apos;t republish other people&apos;s generated images as our own. We don&apos;t use
-            invented contributor names — an earlier version of this site did, and those have been
-            removed. We don&apos;t publish a prompt we haven&apos;t run.
+            We don&apos;t republish other people&apos;s generated images as our own.
+            We don&apos;t publish invented contributor names — an earlier version of
+            this site attached fictional author names and stock profile photos to
+            each prompt, and those have been removed entirely.
           </p>
 
+          <h2>How this site is funded</h2>
           <p>
-            This site is funded by display advertising. We have no commercial relationship with
-            Midjourney, Google, Stability AI or Meta.
+            Moments Gallari is intended to be supported by display advertising. We
+            have no commercial relationship with, and no affiliation to, Midjourney,
+            Google, Stability AI, OpenAI or Meta.
           </p>
 
+          <h2>Contact</h2>
           <p>
-            Questions or corrections? The{" "}
-            <a href="/contact">contact page</a> has everything.
-          </p>
-
-          <p>
-            <em>Last updated: [DATE]</em>
+            Questions, corrections, attribution and takedown requests all go to the
+            same place:{" "}
+            <a href="mailto:dineshkumarmurugesan002@gmail.com" className="break-all">
+              dineshkumarmurugesan002@gmail.com
+            </a>
+            . More detail is on the <a href="/contact">contact page</a>.
           </p>
         </div>
       </div>
