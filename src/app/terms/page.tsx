@@ -25,7 +25,7 @@ export default function TermsPage() {
 
           <h2 className="text-2xl font-bold mt-8 mb-4">1. Acceptance of Terms</h2>
           <p>
-            By accessing and using Moments Gallari ("the Website"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.
+            By accessing and using Moments Gallari (&ldquo;the Website&rdquo;), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.
           </p>
 
           <h2 className="text-2xl font-bold mt-8 mb-4">2. Description of Service</h2>
@@ -53,7 +53,7 @@ export default function TermsPage() {
 
           <h2 className="text-2xl font-bold mt-8 mb-4">5. Disclaimer of Warranties</h2>
           <p>
-            Your use of the service is at your sole risk. The service is provided on an "as is" and "as available" basis. Moments Gallari expressly disclaims all warranties of any kind, whether express or implied.
+            Your use of the service is at your sole risk. The service is provided on an &ldquo;as is&rdquo; and &ldquo;as available&rdquo; basis. Moments Gallari expressly disclaims all warranties of any kind, whether express or implied.
           </p>
           <p>
             We do not guarantee that the prompts provided will always produce the exact same result in AI image generators, as AI models are constantly updated and vary in output based on seeds and versions.

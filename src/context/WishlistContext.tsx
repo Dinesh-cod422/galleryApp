@@ -14,15 +14,13 @@ const WishlistContext = createContext<WishlistContextType | undefined>(undefined
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const [wishlist, setWishlist] = useState<Pin[]>([]);
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     const saved = localStorage.getItem('guessme-wishlist');
     if (saved) {
       try {
         setWishlist(JSON.parse(saved));
-      } catch (e) {
+      } catch {
         console.error("Failed to parse wishlist");
       }
     }

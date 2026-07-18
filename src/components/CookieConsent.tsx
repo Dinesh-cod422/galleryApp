@@ -48,7 +48,7 @@ export default function CookieConsent() {
       <div className="max-w-[2200px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="text-sm text-gray-700 dark:text-gray-300">
           <p>
-            We use cookies to personalize content and ads, to provide social media features and to analyze our traffic. We also share information about your use of our site with our social media, advertising and analytics partners who may combine it with other information that you've provided to them or that they've collected from your use of their services.
+            We use cookies to personalize content and ads, to provide social media features and to analyze our traffic. We also share information about your use of our site with our social media, advertising and analytics partners who may combine it with other information that you&rsquo;ve provided to them or that they&rsquo;ve collected from your use of their services.
             {" "}
             <Link href="/privacy" className="text-blue-600 dark:text-blue-400 hover:underline">
               Learn more in our Privacy Policy.
