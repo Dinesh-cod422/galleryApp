@@ -28,6 +28,7 @@ export default function UploadPage() {
   const [uploadSecret, setUploadSecret] = useState("");
 
   const [formData, setFormData] = useState({
+    title: "",
     prompt: "",
     embedUrl: "",
     imageUrl: "",
@@ -77,6 +78,7 @@ export default function UploadPage() {
       if (response.ok) {
         setSuccessMessage(data.message || "Pin uploaded and saved successfully!");
         setFormData({
+          title: "",
           prompt: "",
           embedUrl: "",
           imageUrl: "",
@@ -144,6 +146,31 @@ export default function UploadPage() {
                   placeholder="Must match UPLOAD_SECRET"
                 />
               </div>
+            </div>
+
+            <div className="sm:col-span-2">
+              <label htmlFor="title" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                Title <span className="text-red-500">*</span>
+              </label>
+              <div className="mt-1">
+                <input
+                  type="text"
+                  name="title"
+                  id="title"
+                  required
+                  minLength={8}
+                  maxLength={70}
+                  value={formData.title}
+                  onChange={handleChange}
+                  className="block w-full rounded-xl border-0 py-3 px-4 text-neutral-900 dark:text-white shadow-sm ring-1 ring-inset ring-neutral-300 dark:ring-neutral-700 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-transparent transition-all"
+                  placeholder="e.g. Moonlit Garden Portrait in Ivory Kurta"
+                />
+              </div>
+              <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+                Written for a reader, 8-70 characters. Titles are no longer derived
+                from the prompt — that produced 69 truncated titles ending in
+                &quot;...&quot;.
+              </p>
             </div>
 
             <div className="sm:col-span-2">

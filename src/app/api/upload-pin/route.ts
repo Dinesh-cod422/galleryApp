@@ -37,23 +37,25 @@ function isAllowedImageUrl(value: unknown): value is string {
   );
 }
 
-// Helper function to auto-generate a generic title from the prompt
-function generateTitle(prompt: string): string {
-  if (!prompt) return "New Masterpiece";
-  
-  // Try to find a TITLE: declaration in the prompt
-  const titleMatch = prompt.match(/TITLE:\s*([^\n]+)/i);
-  if (titleMatch && titleMatch[1]) {
-    // Return title capitalized nicely
-    return titleMatch[1].trim().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
-  }
-
-  // Fallback: take first 4 words of prompt
-  const words = prompt.split(/\s+/).filter(Boolean);
-  if (words.length === 0) return "Aesthetic Artwork";
-  
-  const shortTitle = words.slice(0, 5).join(" ");
-  return shortTitle.length > 25 ? shortTitle.substring(0, 25) + "..." : shortTitle;
+/**
+ * Titles are written by a human. They are NOT derived from the prompt any more.
+ *
+ * The previous implementation took the first five words of the prompt, cut them
+ * at 25 characters and appended "...". That single function produced the corpus
+ * we now have: 69 of 111 titles end in a mid-word ellipsis, only 67 are distinct,
+ * and 22 pages share the title "Create an EXTREMELY ULTRA...". Those strings are
+ * the <h1>, the <title>, and the JSON-LD name on every page — mid-word truncation
+ * reads as machine-generated, which is precisely the impression to avoid.
+ *
+ * Fixing rendering was not enough; the generator had to stop making more.
+ */
+function validateTitle(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const title = value.trim().replace(/\s+/g, " ");
+  if (title.length < 8 || title.length > 70) return null;
+  // Reject the shape the old generator produced, in case anything replays it.
+  if (/(\.\.\.|…)$/.test(title)) return null;
+  return title;
 }
 
 // Helper function to format prompt structure without changing core content
@@ -100,6 +102,7 @@ export async function POST(req: Request) {
     const {
       embedUrl,
       imageUrl,
+      title: rawTitle,
       prompt,
       filter,
       Tstatus,
@@ -193,7 +196,16 @@ export async function POST(req: Request) {
     const newId = (maxId + 1).toString();
 
     // 4. Auto-generate Title
-    const generatedTitle = generateTitle(prompt);
+    const title = validateTitle(rawTitle);
+    if (!title) {
+      return NextResponse.json(
+        {
+          error:
+            "A title is required: 8-70 characters, written for a reader, not ending in an ellipsis.",
+        },
+        { status: 400 }
+      );
+    }
 
     // NOTE: this route previously invented an `author` name and a randomuser.me
     // avatar for every pin, and assigned a random imageUrl. Attributing content to
@@ -213,7 +225,7 @@ export async function POST(req: Request) {
       id: newId,
       embedUrl,
       imageUrl,
-      title: generatedTitle,
+      title,
       prompt: formatPromptStructure(prompt),
       filter: parsedFilter,
       Tstatus: Tstatus || "Trending",
@@ -245,7 +257,7 @@ export async function POST(req: Request) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            message: `Auto-add new pin: ${generatedTitle}`,
+            message: `Add pin: ${title}`,
             content: encodedContent,
             sha: sha, // Include the sha we fetched earlier to update the file
           }),

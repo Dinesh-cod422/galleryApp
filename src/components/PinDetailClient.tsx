@@ -150,12 +150,15 @@ export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | 
           <span className="font-semibold tracking-wide text-sm">Back to Gallery</span>
         </Link>
 
-        <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-start w-full">
+        {/* Two columns only when there is an image to fill one. Without a render,
+            reserving half the viewport for a placeholder leaves a large dead area
+            beside the text and reads as a broken page. */}
+        <div className={`flex flex-col ${media ? "lg:flex-row" : ""} gap-10 lg:gap-16 items-start w-full`}>
 
           {/* Hero: our own render. The Instagram embed is no longer the focal
               media — it appears further down as a credited citation. */}
-          <div className="w-full lg:w-1/2 flex justify-center lg:justify-end shrink-0">
-            {media ? (
+          {media && (
+            <div className="w-full lg:w-1/2 flex justify-center lg:justify-end shrink-0">
               <figure className="w-full max-w-[360px] sm:max-w-[420px] z-10">
                 <Image
                   src={media.src}
@@ -173,19 +176,11 @@ export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | 
                   </span>
                 </figcaption>
               </figure>
-            ) : (
-              <div className="w-full max-w-[360px] sm:max-w-[420px] rounded-[2.5rem] border border-dashed border-black/15 dark:border-white/20 p-8 text-center z-10">
-                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                  We haven&apos;t published our own render of this prompt yet, so
-                  there&apos;s no image to show. The full prompt is below, and the
-                  original post is linked at the bottom of the page.
-                </p>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Details Section */}
-          <div className="w-full lg:w-1/2 flex flex-col justify-center animate-fade-in-up z-20 pt-2 lg:pt-8" style={{ animationDelay: '200ms' }}>
+          <div className={`w-full ${media ? "lg:w-1/2" : "max-w-3xl"} flex flex-col justify-center animate-fade-in-up z-20 pt-2 lg:pt-8`} style={{ animationDelay: '200ms' }}>
             <div className="flex items-center justify-between mb-6">
 
 
@@ -229,6 +224,15 @@ export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | 
             {editorial && (
               <p className="text-base sm:text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-8">
                 {editorial.standfirst}
+              </p>
+            )}
+
+            {/* One compact line rather than a large empty placeholder box. */}
+            {!media && (
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-8">
+                We haven&apos;t published our own render of this prompt yet. The full
+                prompt is below, and the original post is credited at the foot of
+                the page.
               </p>
             )}
 
