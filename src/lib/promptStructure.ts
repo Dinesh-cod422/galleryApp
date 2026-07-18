@@ -104,6 +104,7 @@ export function hasStructure(sections: PromptSection[]): boolean {
  * Skips headings and bullet glyphs so the excerpt reads as a sentence.
  */
 export function promptExcerpt(prompt: string, maxLength = 150): string {
+  if (!prompt) return "";
   const firstProse = prompt
     .replace(/\r\n/g, "\n")
     .split("\n")

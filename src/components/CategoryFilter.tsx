@@ -41,10 +41,6 @@ function FilterList({ counts }: { counts?: Record<string, number> }) {
 
         const count = counts?.[category];
 
-        // Hide chips that lead nowhere rather than letting a visitor click into
-        // an empty result set. Counts come from the same predicate the filter
-        // uses, so a chip can never advertise a number the page won't deliver.
-        if (count === 0 && !isSelected) return null;
         let buttonStyle = isSelected
           ? "bg-black text-white border-black dark:bg-white dark:text-black dark:border-white shadow-md scale-105"
           : "bg-white text-gray-600 border-gray-200 hover:border-gray-400 dark:bg-[#0a0a0a] dark:text-gray-300 dark:border-white/10 dark:hover:border-white/30 hover:scale-105";

@@ -278,10 +278,10 @@ export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | 
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 mt-auto">
+            <div className="sticky bottom-6 z-40 flex flex-col sm:flex-row gap-3 sm:gap-4 mt-auto p-3 sm:p-4 -mx-3 sm:-mx-4 bg-gray-50/80 dark:bg-[#000000]/80 backdrop-blur-xl rounded-[2rem] border border-black/5 dark:border-white/10 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_40px_rgba(255,255,255,0.05)]">
               <button
                 onClick={copyPrompt}
-                className="flex-1 min-w-0 sm:min-w-[200px] flex items-center justify-center gap-2 sm:gap-3 bg-gray-900 text-white dark:bg-white dark:text-black font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-full hover:scale-105 transition-all shadow-lg dark:shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-xl dark:hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] relative overflow-hidden group text-sm sm:text-base"
+                className="flex-1 min-w-0 sm:min-w-[200px] flex items-center justify-center gap-2 sm:gap-3 bg-gray-900 text-white dark:bg-white dark:text-black font-bold py-3.5 sm:py-4 px-4 sm:px-6 rounded-full hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg dark:shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-xl relative overflow-hidden group text-sm sm:text-base"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 dark:via-black/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
                 <span className="relative z-10">{copiedPrompt ? "Copied Prompt!" : "Copy Full Prompt"}</span>
@@ -289,7 +289,7 @@ export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | 
 
               <button
                 onClick={shareLink}
-                className="flex-1 min-w-0 sm:min-w-[200px] flex items-center justify-center gap-2 sm:gap-3 bg-white dark:bg-[#1a1a1a] text-black dark:text-white font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-full hover:bg-gray-100 dark:hover:bg-[#2a2a2a] transition-all border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 shadow-sm text-sm sm:text-base"
+                className="flex-1 min-w-0 sm:min-w-[200px] flex items-center justify-center gap-2 sm:gap-3 bg-white dark:bg-[#1a1a1a] text-black dark:text-white font-bold py-3.5 sm:py-4 px-4 sm:px-6 rounded-full hover:bg-gray-100 dark:hover:bg-[#2a2a2a] transition-all border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 shadow-sm text-sm sm:text-base active:scale-[0.98]"
               >
                 {copiedLink ? "Link Copied!" : "Share Link"}
               </button>

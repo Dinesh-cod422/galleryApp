@@ -1,4 +1,3 @@
-import localPins from "../../public/pins.json";
 import { promptExcerpt } from "@/lib/promptStructure";
 
 export interface Pin {
@@ -62,15 +61,11 @@ export function toCardData(pin: Pin): PinCardData {
     TrendingPosition: pin.TrendingPosition,
     embedUrl: pin.embedUrl,
     imageUrl: pin.imageUrl,
-    excerpt: promptExcerpt(pin.prompt, 220),
+    excerpt: promptExcerpt(pin.prompt || "", 220),
   };
 }
 
 export async function getPins(): Promise<Pin[]> {
-  if (process.env.NODE_ENV === "development") {
-    return localPins as Pin[];
-  }
-
   try {
     const res = await fetch(DATA_URL, {
       next: { revalidate: 300 }, // Re-fetch data every 5 minutes so new uploads appear quickly

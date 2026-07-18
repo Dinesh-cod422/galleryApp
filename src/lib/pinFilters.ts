@@ -28,6 +28,8 @@ export const CATEGORIES = [
   "Vintage",
   "Streetwear",
   "3D",
+  "Kids",
+  "Artistic",
 ] as const;
 
 /**
