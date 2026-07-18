@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "@/components/AppLink";
 import type { Pin } from "@/data/mock-pins";
 import { getPinEntry } from "@/data/pin-editorial";
+import { promptExcerpt } from "@/lib/promptStructure";
 import { getInstagramEmbedUrl } from "@/components/InstagramCredit";
 import { useWishlist } from "@/context/WishlistContext";
 import { useState, useEffect } from "react";
@@ -11,6 +12,29 @@ import { useState, useEffect } from "react";
 interface PinCardProps {
   pin: Pin;
   showTrendingTag?: boolean;
+}
+
+/**
+ * A quiet tint per primary tag, so a grid of prompt cards has visual rhythm
+ * instead of reading as one flat block. Purely decorative — it encodes nothing
+ * a visitor needs, and the tag is also shown as text.
+ */
+const ACCENTS: Record<string, { from: string; to: string }> = {
+  cinematic: { from: "from-purple-500/10", to: "to-indigo-500/5" },
+  aesthetic: { from: "from-pink-500/10", to: "to-rose-500/5" },
+  portrait: { from: "from-amber-500/10", to: "to-orange-500/5" },
+  fashion: { from: "from-fuchsia-500/10", to: "to-purple-500/5" },
+  love: { from: "from-rose-500/10", to: "to-pink-500/5" },
+  couple: { from: "from-red-500/10", to: "to-rose-500/5" },
+  anime: { from: "from-sky-500/10", to: "to-cyan-500/5" },
+  "3d": { from: "from-teal-500/10", to: "to-emerald-500/5" },
+  artistic: { from: "from-violet-500/10", to: "to-purple-500/5" },
+};
+
+const DEFAULT_ACCENT = { from: "from-gray-500/10", to: "to-gray-500/5" };
+
+function accentFor(tag?: string) {
+  return (tag && ACCENTS[tag.toLowerCase()]) || DEFAULT_ACCENT;
 }
 
 // Re-exported for backwards compatibility. The canonical definition — and the
@@ -25,6 +49,8 @@ export default function PinCard({ pin, showTrendingTag = false }: PinCardProps) 
 
   const isLiked = mounted ? isInWishlist(pin.id) : false;
   const media = getPinEntry(pin.id)?.media;
+  const excerpt = promptExcerpt(pin.prompt, 220);
+  const accent = accentFor(pin.filter?.[0]);
 
   const handleWishlistToggle = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -44,7 +70,7 @@ export default function PinCard({ pin, showTrendingTag = false }: PinCardProps) 
         className="block relative rounded-[2rem] overflow-hidden bg-white dark:bg-[#0a0a0a] border border-black/5 dark:border-white/5 shadow-xl dark:shadow-2xl hover:shadow-[0_0_30px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_0_40px_rgba(255,255,255,0.15)] hover:border-black/10 dark:hover:border-white/20 hover:-translate-y-2 transition-all duration-700 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black dark:focus-visible:outline-white"
       >
         {media ? (
-          /* Our own render. This is what the card should always be. */
+          /* Our own render, once the pin has one. */
           <Image
             src={media.src}
             alt={media.alt}
@@ -54,18 +80,32 @@ export default function PinCard({ pin, showTrendingTag = false }: PinCardProps) 
             className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-[1.03]"
           />
         ) : (
-          /* Fallback until this pin has its own render. The embed is shown at its
-             natural size with the account header and caption intact — it is no
-             longer cropped to conceal that it is a third-party frame. */
-          <div className="w-full relative bg-gray-100 dark:bg-black">
-            <iframe
-              src={getInstagramEmbedUrl(pin.embedUrl)}
-              title={`Instagram post: ${pin.title}`}
-              className="w-full border-0 pointer-events-none"
-              height={520}
-              scrolling="no"
-              loading="lazy"
-            />
+          /* No render yet, so the card presents the prompt itself — which is
+             what this site actually publishes. Previously it embedded the
+             Instagram post: uncropped that produced a grid of mismatched iframe
+             heights, and cropped it concealed the fact that the media was a
+             third-party frame. A prompt card avoids both and tells the visitor
+             what they are about to open. The embed still appears, credited, on
+             the pin page. */
+          <div
+            aria-hidden="true"
+            /* Extra top padding when a status badge is overlaid, otherwise the
+               absolutely-positioned pill sits on top of the first line of the
+               prompt excerpt. */
+            className={`relative px-5 pb-5 bg-gradient-to-br ${accent.from} ${accent.to} ${
+              showTrendingTag && pin.Tstatus ? "pt-16" : "pt-6"
+            }`}
+          >
+            <p className="font-mono text-[11px] leading-relaxed text-gray-700 dark:text-gray-300 line-clamp-6 whitespace-pre-wrap">
+              {excerpt}
+            </p>
+            <span className="mt-4 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-600 dark:text-gray-400">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg>
+              Full prompt
+            </span>
           </div>
         )}
 

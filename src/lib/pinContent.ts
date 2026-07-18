@@ -42,11 +42,58 @@ const MAX_TITLE_LENGTH = 70;
  * distinct titles from 67 to 55 and raises collisions from 51 to 60, because the
  * tag vocabulary is only six words wide.
  */
+/** Convert an ALL-CAPS heading to sentence-friendly title case. */
+function titleCase(value: string): string {
+  const minor = new Set(["a", "an", "the", "of", "in", "on", "at", "for", "and", "or", "with"]);
+  return value
+    .toLowerCase()
+    .split(/\s+/)
+    .map((word, i) => {
+      if (i > 0 && minor.has(word)) return word;
+      // Capitalise the first *letter*, not charAt(0) — otherwise a word like
+      // "(exact" keeps its lowercase e because the bracket is position zero.
+      return word.replace(/[a-z]/, (c) => c.toUpperCase());
+    })
+    .join(" ");
+}
+
+/**
+ * Some prompts open with the author's own `TITLE: ...` declaration. That is a
+ * real, hand-written title and is far better than the stored one, because 74 of
+ * the 111 stored titles are just the prompt's opening words truncated at 25
+ * characters — not titles at all.
+ *
+ * Using it is presentation of existing authored data, not generation.
+ */
+function authoredTitle(pin: Pin): string | null {
+  const match = pin.prompt?.match(/^TITLE:\s*([^\n]+)/im);
+  if (!match) return null;
+
+  const value = match[1].trim().replace(/[(\[{]$/, "").trim();
+  if (value.length < 8 || value.length > MAX_TITLE_LENGTH) return null;
+
+  // Only re-case if it was shouted; leave mixed-case titles as written.
+  return value === value.toUpperCase() ? titleCase(value) : value;
+}
+
+/** True when the stored title is merely the prompt's opening words. */
+function isPromptPrefix(title: string, prompt: string): boolean {
+  const head = title.slice(0, Math.min(20, title.length)).toLowerCase();
+  return head.length >= 8 && prompt.trim().toLowerCase().startsWith(head);
+}
+
 function buildDisplayTitle(pin: Pin): string {
   let raw = (pin.title || "").trim();
 
   // Drop trailing ellipsis (both the literal "..." and the single-char "…").
   raw = raw.replace(/\s*(\.{3}|…)\s*$/, "").trim();
+
+  // When the stored title is just a truncated prompt prefix, prefer the
+  // author's own TITLE: line if the prompt declares one.
+  if (!raw || isPromptPrefix(raw, pin.prompt ?? "")) {
+    const authored = authoredTitle(pin);
+    if (authored) return authored;
+  }
 
   if (!raw || GENERIC_TITLES.has(raw.toLowerCase())) {
     return "Untitled AI Image Prompt";

@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "@/components/AppLink";
 import { type Pin } from "@/data/mock-pins";
 import { getPinEntry } from "@/data/pin-editorial";
+import { parsePromptSections, hasStructure } from "@/lib/promptStructure";
 import PinCard from "@/components/PinCard";
 import InstagramCredit from "@/components/InstagramCredit";
 import Header from "@/components/Header";
@@ -41,6 +42,10 @@ export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | 
   const entry = getPinEntry(pin.id);
   const media = entry?.media;
   const editorial = entry?.editorial;
+
+  // Presentation of the prompt's existing structure. Nothing is generated.
+  const sections = parsePromptSections(pin.prompt);
+  const structured = hasStructure(sections);
 
   const shareLink = async () => {
     const shareData = {
@@ -244,8 +249,32 @@ export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | 
             </h3>
 
             <div className="bg-white dark:bg-[#0a0a0a] p-6 rounded-[2rem] mb-10 border border-black/5 dark:border-white/10 shadow-xl dark:shadow-[0_0_30px_rgba(0,0,0,0.5)] flex flex-col items-start relative group">
-              <div className={`text-gray-700 dark:text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed font-serif italic whitespace-pre-wrap transition-all duration-500 ${!isPromptExpanded ? "line-clamp-6" : ""}`}>
-                &quot;{pin.prompt}&quot;
+              <div
+                className={`w-full transition-all duration-500 ${!isPromptExpanded ? "max-h-64 overflow-hidden" : ""}`}
+              >
+                {structured ? (
+                  /* The prompt's own sections, rendered as sections. This is a
+                     reformat of the author's text — no wording is added,
+                     removed or summarised. */
+                  <div className="space-y-5">
+                    {sections.map((section, i) => (
+                      <div key={i}>
+                        {section.title && (
+                          <h4 className="text-[11px] font-bold uppercase tracking-widest text-purple-600 dark:text-purple-400 mb-1.5">
+                            {section.title}
+                          </h4>
+                        )}
+                        <div className="text-gray-700 dark:text-gray-300 text-sm sm:text-base leading-relaxed whitespace-pre-wrap">
+                          {section.lines.join("\n")}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-gray-700 dark:text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed whitespace-pre-wrap">
+                    {pin.prompt}
+                  </div>
+                )}
               </div>
 
               {/* Fade out effect when collapsed */}

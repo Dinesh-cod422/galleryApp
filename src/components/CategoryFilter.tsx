@@ -2,29 +2,10 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { CATEGORIES } from "@/lib/pinFilters";
 
-const CATEGORIES = [
-  "All",
-  "New",
-  "Popular",
-  "Trending",
-  "Women's",
-  "Men's",
-  "Love",
-  "Baby",
-  "Couple",
-  "Cinematic",
-  "Portrait",
-  "Aesthetic",
-  "Collage",
-  "Fashion",
-  "Anime",
-  "Vintage",
-  "Streetwear",
-  "3D"
-];
 
-function FilterList() {
+function FilterList({ counts }: { counts?: Record<string, number> }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentCategory = searchParams?.get("category") || "All";
@@ -57,6 +38,13 @@ function FilterList() {
         // arriving from a pin page.
         const isSelected =
           currentCategory.toLowerCase() === category.toLowerCase();
+
+        const count = counts?.[category];
+
+        // Hide chips that lead nowhere rather than letting a visitor click into
+        // an empty result set. Counts come from the same predicate the filter
+        // uses, so a chip can never advertise a number the page won't deliver.
+        if (count === 0 && !isSelected) return null;
         let buttonStyle = isSelected
           ? "bg-black text-white border-black dark:bg-white dark:text-black dark:border-white shadow-md scale-105"
           : "bg-white text-gray-600 border-gray-200 hover:border-gray-400 dark:bg-[#0a0a0a] dark:text-gray-300 dark:border-white/10 dark:hover:border-white/30 hover:scale-105";
@@ -84,6 +72,9 @@ function FilterList() {
             className={`px-5 py-2.5 rounded-full whitespace-nowrap text-sm font-semibold transition-all border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black dark:focus-visible:outline-white ${buttonStyle}`}
           >
             {category}
+            {typeof count === "number" && (
+              <span className="ml-2 opacity-60 tabular-nums">{count}</span>
+            )}
           </button>
         );
       })}
@@ -91,10 +82,10 @@ function FilterList() {
   );
 }
 
-export default function CategoryFilter() {
+export default function CategoryFilter({ counts }: { counts?: Record<string, number> }) {
   return (
     <Suspense fallback={<div className="h-16" />}>
-      <FilterList />
+      <FilterList counts={counts} />
     </Suspense>
   );
 }

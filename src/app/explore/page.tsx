@@ -3,6 +3,7 @@ import { getPins } from "@/data/mock-pins";
 import Header from "@/components/Header";
 import CategoryFilter from "@/components/CategoryFilter";
 import Link from "@/components/AppLink";
+import { filterPins, countByCategory, CATEGORIES } from "@/lib/pinFilters";
 import type { Metadata } from "next";
 
 /** Cards shown per page. The unpaginated grid rendered all 111 at once. */
@@ -22,60 +23,12 @@ export default async function ExplorePage(props: {
   const q = typeof searchParams.q === 'string' ? searchParams.q.toLowerCase() : '';
   const category = typeof searchParams.category === 'string' ? searchParams.category.toLowerCase() : '';
 
-  let pins = await getPins();
+  const allPins = await getPins();
 
-  // Apply Search Query Filter
-  if (q) {
-    // Deliberately no longer searches `author` — those names were fabricated, so
-    // matching on them only ever produced meaningless hits.
-    pins = pins.filter(pin =>
-      pin.title.toLowerCase().includes(q) ||
-      pin.prompt.toLowerCase().includes(q)
-    );
-  }
-
-  // Apply Category Filter
-  if (category && category !== 'all') {
-    pins = pins.filter(pin => {
-      // Check exact filter matches from pins.json first
-      if (pin.filter && pin.filter.some(f => f.toLowerCase() === category.toLowerCase())) {
-        return true;
-      }
-
-      // Handle Tstatus based categories
-      if (category === "new" && pin.Tstatus === "New") return true;
-      if (category === "popular" && pin.Tstatus === "Popular") return true;
-      if (category === "trending" && pin.Tstatus === "Trending") return true;
-      
-      // Smart fallback for specific categories
-      const text = (pin.title + ' ' + pin.prompt).toLowerCase();
-      
-      if (category === "women's") {
-        return /\b(woman|women|female|girl|bride|saree|kurti|her|she|ladies|lady)\b/.test(text);
-      }
-      
-      if (category === "men's") {
-        return /\b(man|men|male|boy|groom|he|his|him|guy|mens)\b/.test(text);
-      }
-      
-      if (category === "love") {
-        return /\b(love|romantic|heart|valentine|romance|affection)\b/.test(text);
-      }
-      
-      if (category === "baby") {
-        return /\b(baby|infant|toddler|child|kid|newborn)\b/.test(text);
-      }
-      
-      if (category === "couple") {
-        return /\b(couple|husband|wife|wedding|together|partner)\b/.test(text);
-      }
-      
-      // Generic fallback. Author matching removed with the fabricated names —
-      // verified to change no chip's result set, since every pin that matched on
-      // author already matched on title or prompt.
-      return text.includes(category);
-    });
-  }
+  // Strict tag/status matching — see src/lib/pinFilters.ts for why the old
+  // regex fallbacks were removed.
+  const pins = filterPins(allPins, q, category);
+  const categoryCounts = countByCategory(allPins, CATEGORIES);
 
   // Paginate AFTER filtering, and clamp the index so ?page=999 or ?page=-1
   // lands on a real page instead of rendering an empty grid.
@@ -111,7 +64,7 @@ export default async function ExplorePage(props: {
 
       <div className="relative z-10 px-4 sm:px-6 pt-8 sm:pt-32 max-w-[2200px] mx-auto">
         <h1 className="text-3xl font-bold mb-4">Explore Gallery</h1>
-        <CategoryFilter />
+        <CategoryFilter counts={categoryCounts} />
       </div>
 
       {/* Masonry Grid Layout */}
