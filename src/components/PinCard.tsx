@@ -1,7 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "@/components/AppLink";
 import type { Pin } from "@/data/mock-pins";
+import { getPinEntry } from "@/data/pin-editorial";
+import { getInstagramEmbedUrl } from "@/components/InstagramCredit";
 import { useWishlist } from "@/context/WishlistContext";
 import { useState, useEffect } from "react";
 
@@ -10,13 +13,9 @@ interface PinCardProps {
   showTrendingTag?: boolean;
 }
 
-export function getInstagramEmbedUrl(url: string) {
-  if (!url) return '';
-  if (url.includes('/embed')) return url;
-  const baseUrl = url.split('?')[0];
-  const cleanBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
-  return `${cleanBase}embed/?autoplay=0&hidecaption=true`;
-}
+// Re-exported for backwards compatibility. The canonical definition — and the
+// explanation of why the caption is no longer hidden — lives in InstagramCredit.
+export { getInstagramEmbedUrl };
 
 export default function PinCard({ pin, showTrendingTag = false }: PinCardProps) {
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
@@ -25,6 +24,7 @@ export default function PinCard({ pin, showTrendingTag = false }: PinCardProps) 
   useEffect(() => setMounted(true), []);
 
   const isLiked = mounted ? isInWishlist(pin.id) : false;
+  const media = getPinEntry(pin.id)?.media;
 
   const handleWishlistToggle = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -38,22 +38,49 @@ export default function PinCard({ pin, showTrendingTag = false }: PinCardProps) 
 
   return (
     <div className="mb-6 sm:mb-8 break-inside-avoid relative group">
-      <Link href={`/pin/${pin.id}`} prefetch={false} className="block relative rounded-[2rem] overflow-hidden cursor-zoom-in bg-white dark:bg-[#0a0a0a] border border-black/5 dark:border-white/5 shadow-xl dark:shadow-2xl hover:shadow-[0_0_30px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_0_40px_rgba(255,255,255,0.15)] hover:border-black/10 dark:hover:border-white/20 hover:-translate-y-2 transition-all duration-700 ease-out">
-
-        {/* Subtle inner noise/glow texture overlay */}
-        <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-black/5 dark:from-white/10 via-transparent to-transparent transition-opacity duration-700 pointer-events-none" />
-
-        <div className="w-full relative h-[250px] sm:h-[450px] overflow-hidden pointer-events-none bg-gray-100 dark:bg-black z-0">
-          <iframe
-            src={getInstagramEmbedUrl(pin.embedUrl)}
-            className="w-[110%] max-w-none border-0 absolute left-[-5%] transition-transform duration-1000 group-hover:scale-[1.05] opacity-90 group-hover:opacity-100 pointer-events-none"
-            style={{ height: '600px', top: '-60px' }}
-            scrolling="no"
-            loading="lazy"
+      <Link
+        href={`/pin/${pin.id}`}
+        prefetch={false}
+        className="block relative rounded-[2rem] overflow-hidden bg-white dark:bg-[#0a0a0a] border border-black/5 dark:border-white/5 shadow-xl dark:shadow-2xl hover:shadow-[0_0_30px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_0_40px_rgba(255,255,255,0.15)] hover:border-black/10 dark:hover:border-white/20 hover:-translate-y-2 transition-all duration-700 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black dark:focus-visible:outline-white"
+      >
+        {media ? (
+          /* Our own render. This is what the card should always be. */
+          <Image
+            src={media.src}
+            alt={media.alt}
+            width={media.width}
+            height={media.height}
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-[1.03]"
           />
+        ) : (
+          /* Fallback until this pin has its own render. The embed is shown at its
+             natural size with the account header and caption intact — it is no
+             longer cropped to conceal that it is a third-party frame. */
+          <div className="w-full relative bg-gray-100 dark:bg-black">
+            <iframe
+              src={getInstagramEmbedUrl(pin.embedUrl)}
+              title={`Instagram post: ${pin.title}`}
+              className="w-full border-0 pointer-events-none"
+              height={520}
+              scrolling="no"
+              loading="lazy"
+            />
+          </div>
+        )}
+
+        {/* Text-bearing card: the grid was previously 111 wordless tiles a visitor
+            could not tell apart before clicking. */}
+        <div className="p-4">
+          <h3 className="font-bold text-sm sm:text-base leading-snug line-clamp-2 text-gray-900 dark:text-white">
+            {pin.title}
+          </h3>
+          {pin.filter && pin.filter.length > 0 && (
+            <p className="mt-1.5 text-xs text-gray-600 dark:text-gray-400">
+              {pin.filter.slice(0, 2).map((t) => `#${t}`).join("  ")}
+            </p>
+          )}
         </div>
-        {/* Transparent overlay to capture clicks for Next.js Link navigation */}
-        <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       </Link>
 
       {/* Status Tag Overlay */}
@@ -87,13 +114,14 @@ export default function PinCard({ pin, showTrendingTag = false }: PinCardProps) 
         </div>
       )}
 
-      {/* Wishlist Button Overlay */}
+      {/* Wishlist Button Overlay. `opacity-0 group-hover` alone made this
+          invisible to keyboard users — focus-visible restores it (WCAG 2.4.7). */}
       {mounted && (
         <button
           onClick={handleWishlistToggle}
           className={`absolute top-4 right-4 z-20 p-3 rounded-full backdrop-blur-md transition-all duration-300 scale-90 sm:scale-100 shadow-lg border ${isLiked
             ? 'bg-red-500/90 text-white border-red-400'
-            : 'bg-white/80 dark:bg-black/50 text-gray-500 dark:text-white border-white/20 dark:border-white/10 opacity-0 group-hover:opacity-100 hover:scale-110 hover:bg-white dark:hover:bg-black/80'
+            : 'bg-white/80 dark:bg-black/50 text-gray-600 dark:text-white border-white/20 dark:border-white/10 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 hover:scale-110 hover:bg-white dark:hover:bg-black/80'
             }`}
           aria-label={isLiked ? "Remove from Wishlist" : "Add to Wishlist"}
         >

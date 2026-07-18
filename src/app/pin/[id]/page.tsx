@@ -1,6 +1,7 @@
 import { getPins } from "@/data/mock-pins";
 import PinDetailClient from "@/components/PinDetailClient";
 import { getPinContent } from "@/lib/pinContent";
+import { getPinEntry } from "@/data/pin-editorial";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -27,15 +28,25 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   }
 
   const content = getPinContent(pin);
+  const entry = getPinEntry(pin.id);
 
-  // Create a clean summary from the prompt
+  // Prefer our own writing for the description. The previous value was built from
+  // a generated `summary` that was near-identical on all 111 pages, which is
+  // exactly the duplicate signal we are trying to remove. Falling back to a
+  // prompt excerpt is weaker but at least varies per pin.
+  const description = entry?.editorial?.standfirst
+    ? entry.editorial.standfirst.slice(0, 155)
+    : pin.prompt.length > 155
+      ? `${pin.prompt.slice(0, 152)}...`
+      : pin.prompt;
+
   const cleanDescription = pin.prompt.length > 155
     ? `${pin.prompt.slice(0, 152)}...`
     : pin.prompt;
 
   return {
     title: `${content.displayTitle} | AI Prompt Design`,
-    description: `${content.displayTitle} — ${content.summary}`,
+    description,
     alternates: { canonical: `/pin/${pin.id}` },
     keywords: [
       content.displayTitle.toLowerCase(),
@@ -49,14 +60,21 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       title: `${content.displayTitle} - Moments Gallari`,
       description: `Copy prompt: "${cleanDescription}"`,
       type: "article",
-      images: [
-        {
-          url: pin.imageUrl,
-          width: 800,
-          height: 1000,
-          alt: content.displayTitle,
-        }
-      ],
+      // Only advertise an image we actually host. `pin.imageUrl` 404s on roughly
+      // 36% of the corpus and is shared across dozens of pins, so declaring it
+      // hands crawlers and social scrapers a broken or misleading preview.
+      ...(entry?.media
+        ? {
+            images: [
+              {
+                url: entry.media.src,
+                width: entry.media.width,
+                height: entry.media.height,
+                alt: entry.media.alt,
+              },
+            ],
+          }
+        : {}),
     },
     twitter: {
       card: "summary_large_image",

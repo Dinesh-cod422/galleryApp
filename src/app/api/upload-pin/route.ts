@@ -2,6 +2,13 @@ import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
 
+/** Shape of a record in the upstream JSON. Loose by design — we only read `embedUrl` and `id`. */
+interface StoredPin {
+  id?: string;
+  embedUrl?: string;
+  [key: string]: unknown;
+}
+
 /** Only these hosts may ever reach an <iframe src>. */
 const ALLOWED_EMBED_HOSTS = new Set(["instagram.com", "www.instagram.com"]);
 
@@ -126,7 +133,7 @@ export async function POST(req: Request) {
     const filePathInRepo = "dataofMomentsGalleryApp";
     const githubApiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePathInRepo}`;
 
-    let pins: any[] = [];
+    let pins: StoredPin[] = [];
     let sha = "";
 
     // 1. Fetch current data from GitHub to avoid overwriting existing new data
@@ -167,7 +174,7 @@ export async function POST(req: Request) {
     }
 
     // Prevent duplicate entries
-    const isDuplicate = pins.some((pin: any) => pin.embedUrl === embedUrl);
+    const isDuplicate = pins.some((pin) => pin.embedUrl === embedUrl);
     if (isDuplicate) {
       return NextResponse.json(
         { error: "This pin has already been uploaded." },
@@ -178,7 +185,7 @@ export async function POST(req: Request) {
     // 3. Auto-generate ID
     let maxId = 0;
     for (const pin of pins) {
-      const pinId = parseInt(pin.id, 10);
+      const pinId = parseInt(pin.id ?? "", 10);
       if (!isNaN(pinId) && pinId > maxId) {
         maxId = pinId;
       }

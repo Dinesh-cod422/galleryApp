@@ -1,9 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "@/components/AppLink";
 import { type Pin } from "@/data/mock-pins";
-import PinCard, { getInstagramEmbedUrl } from "@/components/PinCard";
+import { getPinEntry } from "@/data/pin-editorial";
+import PinCard from "@/components/PinCard";
+import InstagramCredit from "@/components/InstagramCredit";
 import Header from "@/components/Header";
 import { useWishlist } from "@/context/WishlistContext";
 import { getPinContent } from "@/lib/pinContent";
@@ -35,6 +38,9 @@ export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | 
 
   const isLiked = mounted ? isInWishlist(pin.id) : false;
   const content = getPinContent(pin);
+  const entry = getPinEntry(pin.id);
+  const media = entry?.media;
+  const editorial = entry?.editorial;
 
   const shareLink = async () => {
     const shareData = {
@@ -82,8 +88,13 @@ export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | 
     // Truncated: the raw prompt runs to 5,395 chars on the longest pin. Not set
     // to content.summary — that string is near-identical across every pin and
     // would strengthen the duplicate-content signal rather than reduce it.
-    "description": pin.prompt.length > 200 ? `${pin.prompt.slice(0, 197)}...` : pin.prompt,
-    "contentUrl": pin.imageUrl,
+    "description": media
+      ? media.alt
+      : pin.prompt.length > 200 ? `${pin.prompt.slice(0, 197)}...` : pin.prompt,
+    // Only advertise an image we actually host and render. `pin.imageUrl` from
+    // the upstream data is shared across dozens of pins and 404s on ~36% of them,
+    // so claiming it here would be misrepresentation with a broken link attached.
+    ...(media ? { "contentUrl": media.src } : {}),
     // Organization, not Person: no individual is being credited here.
     "author": {
       "@type": "Organization",
@@ -103,19 +114,11 @@ export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | 
     }
   };
 
-  // FAQ structured data — gives search engines rich, unique Q&A content per page.
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": content.faqs.map((faq) => ({
-      "@type": "Question",
-      "name": faq.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": faq.answer,
-      },
-    })),
-  };
+  // NOTE: FAQPage structured data was removed here. It marked up Q&As that a
+  // template generated identically across all 111 pages. Google's structured-data
+  // guidelines require marked-up content to be visible, original and genuinely
+  // useful — emitting duplicated FAQ markup at that scale is a manual-action risk
+  // on top of the low-value-content problem it was part of.
 
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#000000] dark:text-white pb-32 sm:pb-20 selection:bg-black/10 dark:selection:bg-white/30 relative overflow-x-hidden transition-colors duration-300">
@@ -123,11 +126,6 @@ export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | 
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      {/* Schema Markup for FAQ */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
       {/* Ambient floating orbs background */}
@@ -154,16 +152,36 @@ export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | 
 
         <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-start w-full">
 
-          {/* Reel Section */}
+          {/* Hero: our own render. The Instagram embed is no longer the focal
+              media — it appears further down as a credited citation. */}
           <div className="w-full lg:w-1/2 flex justify-center lg:justify-end shrink-0">
-            <div className="w-full max-w-[360px] sm:max-w-[420px] aspect-[4/5] bg-[#0a0a0a] rounded-[2.5rem] overflow-hidden shadow-2xl relative border border-black/10 dark:border-white/10 flex-shrink-0 z-10">
-              <iframe
-                src={getInstagramEmbedUrl(pin.embedUrl)}
-                className="w-full h-full border-0 absolute inset-0 scale-[1.15] opacity-95 group-hover:opacity-100 transition-opacity duration-500"
-                style={{ transformOrigin: 'center center' }}
-                scrolling="no"
-              />
-            </div>
+            {media ? (
+              <figure className="w-full max-w-[360px] sm:max-w-[420px] z-10">
+                <Image
+                  src={media.src}
+                  alt={media.alt}
+                  width={media.width}
+                  height={media.height}
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 420px"
+                  className="w-full h-auto rounded-[2.5rem] shadow-2xl border border-black/10 dark:border-white/10"
+                />
+                <figcaption className="mt-3 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                  {media.caption}
+                  <span className="block mt-1 text-xs text-gray-500 dark:text-gray-500">
+                    Generated by us with {media.generatedWith}.
+                  </span>
+                </figcaption>
+              </figure>
+            ) : (
+              <div className="w-full max-w-[360px] sm:max-w-[420px] rounded-[2.5rem] border border-dashed border-black/15 dark:border-white/20 p-8 text-center z-10">
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                  We haven&apos;t published our own render of this prompt yet, so
+                  there&apos;s no image to show. The full prompt is below, and the
+                  original post is linked at the bottom of the page.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Details Section */}
@@ -205,6 +223,13 @@ export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | 
                   </Link>
                 ))}
               </div>
+            )}
+
+            {/* Standfirst — the first thing a reader gets in our own voice. */}
+            {editorial && (
+              <p className="text-base sm:text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-8">
+                {editorial.standfirst}
+              </p>
             )}
 
             <div className="w-full h-px bg-gradient-to-r from-black/10 dark:from-white/20 to-transparent mb-8" />
@@ -254,94 +279,81 @@ export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | 
           </div>
         </div>
 
-        {/* Editorial Content — unique, useful guidance for every prompt */}
-        <article className="mt-20 md:mt-28 pt-12 border-t border-black/10 dark:border-white/10 max-w-3xl">
-          {/* Overview */}
-          <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-5">
-              About this prompt
-            </h2>
-            {content.overview.map((para, i) => (
-              <p key={i} className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4 text-base sm:text-lg">
-                {para}
+        {/* Editorial. Hand-written per pin in src/data/pin-editorial.ts — nothing
+            on this page is generated from a template. A pin without an entry
+            renders the notice below instead of filler. */}
+        {editorial ? (
+          <article className="mt-20 md:mt-28 pt-12 border-t border-black/10 dark:border-white/10 max-w-3xl">
+            <section className="mb-14">
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">
+                What we got
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                Tested on {editorial.testedOn}.
               </p>
-            ))}
-          </section>
-
-          {/* How to use */}
-          <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-6">
-              How to use this prompt
-            </h2>
-            <ol className="space-y-5">
-              {content.howToSteps.map((step, i) => (
-                <li key={i} className="flex gap-4">
-                  <span className="shrink-0 w-8 h-8 rounded-full bg-gray-900 text-white dark:bg-white dark:text-black font-bold flex items-center justify-center text-sm">
-                    {i + 1}
-                  </span>
-                  <div>
-                    <h3 className="font-bold text-lg mb-1">{step.title}</h3>
-                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{step.detail}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </section>
-
-          {/* Recommended tools + Tips */}
-          <div className="grid sm:grid-cols-2 gap-10 mb-14">
-            <section>
-              <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight mb-5">
-                Recommended AI tools
-              </h2>
-              <ul className="space-y-3">
-                {content.recommendedTools.map((tool, i) => (
-                  <li key={i} className="flex items-start gap-3 text-gray-600 dark:text-gray-300 leading-relaxed">
-                    <span className="shrink-0 mt-2 w-1.5 h-1.5 rounded-full bg-purple-500" />
-                    <span>{tool}</span>
+              <ul className="space-y-6">
+                {editorial.runs.map((run, i) => (
+                  <li key={i}>
+                    <h3 className="font-bold text-lg mb-1">{run.variant}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                      {run.outcome}
+                    </p>
                   </li>
                 ))}
               </ul>
             </section>
 
-            <section>
-              <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight mb-5">
-                Tips for the best results
+            <section className="mb-14">
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-6">
+                How to adapt it
               </h2>
-              <ul className="space-y-3">
-                {content.tips.map((tip, i) => (
-                  <li key={i} className="flex items-start gap-3 text-gray-600 dark:text-gray-300 leading-relaxed">
-                    <span className="shrink-0 mt-2 w-1.5 h-1.5 rounded-full bg-blue-500" />
-                    <span>{tip}</span>
+              <ul className="space-y-4">
+                {editorial.adaptations.map((item, i) => (
+                  <li
+                    key={i}
+                    className="flex items-start gap-3 text-gray-600 dark:text-gray-300 leading-relaxed"
+                  >
+                    <span className="shrink-0 mt-2.5 w-1.5 h-1.5 rounded-full bg-purple-500" />
+                    <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </section>
+
+            {editorial.modelNotes && (
+              <section className="mb-4">
+                <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-5">
+                  Model notes
+                </h2>
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                  {editorial.modelNotes}
+                </p>
+              </section>
+            )}
+
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-10 leading-relaxed">
+              Note: when generating images based on a real person&apos;s photo, only
+              use images you own or have explicit permission to use, and always
+              respect others&apos; likeness and privacy.
+            </p>
+          </article>
+        ) : (
+          <div className="mt-20 md:mt-28 pt-12 border-t border-black/10 dark:border-white/10 max-w-3xl">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+              We haven&apos;t documented our own test runs for this prompt yet. When
+              we do, this section will cover what the prompt produced, where it
+              failed, and the specific edits that fixed it — the same treatment as
+              our{" "}
+              <Link href="/guides" className="underline underline-offset-4 font-semibold">
+                prompt guides
+              </Link>
+              .
+            </p>
           </div>
+        )}
 
-          {/* FAQ */}
-          <section className="mb-4">
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-6">
-              Frequently asked questions
-            </h2>
-            <div className="space-y-4">
-              {content.faqs.map((faq, i) => (
-                <div
-                  key={i}
-                  className="bg-white dark:bg-[#0a0a0a] p-5 sm:p-6 rounded-2xl border border-black/5 dark:border-white/10"
-                >
-                  <h3 className="font-bold text-base sm:text-lg mb-2">{faq.question}</h3>
-                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{faq.answer}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <p className="text-xs text-gray-400 dark:text-gray-500 mt-8 leading-relaxed">
-            Note: When generating images based on a real person&apos;s photo, only use images you own or
-            have explicit permission to use, and always respect others&apos; likeness and privacy.
-          </p>
-        </article>
+        {/* The original post, credited. */}
+        <InstagramCredit embedUrl={pin.embedUrl} title={content.displayTitle} />
 
         {/* Related Pins Section */}
         {relatedPins && relatedPins.length > 0 && (
