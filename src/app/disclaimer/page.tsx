@@ -7,6 +7,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/disclaimer" },
 };
 
+// Hand-bumped. `new Date()` claimed the document was revised on whatever day it
+// happened to render — a false statement about a legal page — and froze at the
+// build date in production regardless.
+const LAST_UPDATED = "19 July 2026";
+
 export default function DisclaimerPage() {
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#000000] dark:text-white selection:bg-black/10 dark:selection:bg-white/30 relative overflow-x-hidden transition-colors duration-300">
@@ -16,7 +21,7 @@ export default function DisclaimerPage() {
         <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-8">Disclaimer</h1>
         
         <div className="prose prose-lg dark:prose-invert max-w-none">
-          <p className="text-sm text-gray-500 mb-8">Last Updated: {new Date().toLocaleDateString()}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">Last updated: {LAST_UPDATED}</p>
 
           <h2 className="text-2xl font-bold mt-8 mb-4">1. AI-Generated Content</h2>
           <p>

@@ -55,7 +55,7 @@ export default function Header() {
         <Link href="/" className="flex items-center gap-3 group cursor-pointer">
           <img 
             src="/applogo.png" 
-            alt="Logo" 
+            alt="Moments Gallari" 
             className="w-10 h-10 rounded-full object-cover shadow-lg dark:shadow-glow group-hover:scale-110 transition-transform duration-500" 
           />
           <span className="font-bold text-xl hidden sm:block tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-500 dark:from-white dark:to-gray-400">Moments Gallari</span>
@@ -70,7 +70,7 @@ export default function Header() {
       {pathname === "/explore" ? (
         <div className="w-full sm:flex-1 sm:max-w-xl px-0 sm:px-4 order-last sm:order-none mt-2 sm:mt-0">
           <div className="relative group">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 dark:text-gray-500 group-focus-within:text-black dark:group-focus-within:text-white transition-colors">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-600 dark:text-gray-400 group-focus-within:text-black dark:group-focus-within:text-white transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>

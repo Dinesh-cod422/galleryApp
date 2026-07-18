@@ -4,13 +4,17 @@ export default function Footer() {
   return (
     <footer className="bg-gray-100 dark:bg-[#0a0a0a] py-8 sm:py-12 mt-auto border-t border-gray-200 dark:border-gray-800">
       <div className="max-w-[2200px] mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-8 mb-8">
+        {/* 6 columns, not 5: About/Contact moved out of "Legal" into their own
+            "Company" group. The brand block keeps col-span-2 at the sm
+            breakpoint so the footer does not break on mobile. */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-8 mb-8">
           <div className="col-span-1 sm:col-span-2 md:col-span-2">
             <Link href="/" className="text-2xl font-black tracking-tighter hover:opacity-80 transition-opacity mb-4 inline-block">
               Moments <span className="text-gray-500 dark:text-gray-400 font-light">Gallari</span>
             </Link>
             <p className="text-gray-600 dark:text-gray-400 max-w-sm">
-              Explore a curated collection of beautiful, high-quality AI prompts and custom design ideas. Copy premium prompts for Midjourney, Stable Diffusion, and more.
+              The full text prompts behind the AI images we post on Instagram —
+              free to copy, read and adapt.
             </p>
           </div>
           
@@ -41,7 +45,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="font-bold text-lg mb-4 text-gray-900 dark:text-white">Legal</h3>
+            <h3 className="font-bold text-lg mb-4 text-gray-900 dark:text-white">Company</h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/about" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
@@ -53,6 +57,12 @@ export default function Footer() {
                   Contact Us
                 </Link>
               </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-bold text-lg mb-4 text-gray-900 dark:text-white">Legal</h3>
+            <ul className="space-y-2">
               <li>
                 <Link href="/privacy" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   Privacy Policy

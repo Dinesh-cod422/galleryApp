@@ -8,22 +8,27 @@ const homeFaqs = [
   {
     question: "What is Moments Gallari?",
     answer:
-      "Moments Gallari is a free, curated gallery of high-quality AI image prompts. Each design comes with the exact text prompt used to create it, so you can copy, customise and recreate the look in your own AI image generator.",
+      "Moments Gallari publishes the full text prompts behind the AI images we post on our Instagram account, @moments_galleri. Each page carries the complete prompt, free to copy and adapt, along with the tags describing the style it produces.",
+  },
+  {
+    question: "Where do the prompts come from?",
+    answer:
+      "We write them ourselves and post the results to Instagram first. Every prompt page links back to its original post, which is embedded there in full. Nothing on this site is collected from other people's accounts.",
   },
   {
     question: "Are the prompts free to use?",
     answer:
-      "Yes. Every prompt on the site is free to copy and use in your own AI generations with tools like Midjourney, Stable Diffusion and Google Gemini. We only ask that you respect the rights of any people whose photos you use as a reference.",
+      "Yes, including commercially. Prompts are functional text rather than creative work and we make no ownership claim over them. We only ask that when a prompt is built around a reference photograph, you use photographs you own or have permission to use.",
   },
   {
     question: "Which AI tools do these prompts work with?",
     answer:
-      "The prompts are written to be portable across most modern AI image generators, including Midjourney, Stable Diffusion (SDXL), Google Gemini, DALL·E and Flux. Each prompt page suggests the tools best suited to that particular style.",
+      "They are written to be portable across modern image generators including Midjourney, Stable Diffusion (SDXL), Google Gemini, DALL·E and Flux. Wording that is specific to one model usually needs adjusting for another — our guides cover how to do that.",
   },
   {
     question: "Do I need experience to use these prompts?",
     answer:
-      "Not at all. Beginners can copy a prompt and generate straight away, while our Guides section explains how to write and refine prompts so you can go further. Start with a prompt you like, then tweak the editable parts to make it your own.",
+      "No. You can copy a prompt and generate straight away. If you want to go further, the guides section explains how prompts are structured, what actually changes the output, and which parts are safe to rewrite.",
   },
 ];
 
@@ -112,14 +117,42 @@ export default async function Home() {
           </Link>
         </div>
 
-        {/* SEO & Context Block for AdSense / Search Engines */}
+        {/* Reader-facing introduction. This previously claimed we "meticulously
+            curate the most stunning AI designs across the web" — we do not. The
+            prompts are our own, written for our own Instagram account. */}
         <section className="mt-24 mb-12 max-w-4xl mx-auto bg-white/50 dark:bg-gray-900/30 p-8 rounded-3xl border border-gray-200 dark:border-gray-800 backdrop-blur-sm">
           <h2 className="text-3xl font-bold mb-4">What is Moments Gallari?</h2>
           <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
-            Moments Gallari is your ultimate destination for high-quality, professional AI image generation prompts. In the rapidly evolving world of artificial intelligence, achieving the perfect aesthetic often requires the perfect words. We meticulously curate the most stunning, cinematic, and photorealistic AI designs across the web and provide you with the exact text prompts used to create them.
+            We post AI-generated images to Instagram as{" "}
+            <a
+              href="https://www.instagram.com/moments_galleri"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-4 hover:text-black dark:hover:text-white"
+            >
+              @moments_galleri
+            </a>
+            . The most common question we get is what the prompt was. This site is
+            the answer: every prompt we&apos;ve written, in full, free to copy and
+            change. No sign-up, no paywall, no truncated &ldquo;premium&rdquo; version.
+          </p>
+          <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+            These are long, structured prompts — they specify the face, the outfit,
+            the pose, the environment, the lighting and the camera separately,
+            because that is what it takes to get a consistent look out of a
+            photoreal model. Reading one is a reasonable way to learn how the parts
+            fit together, which is why we publish them whole rather than as tidy
+            one-line summaries.
           </p>
           <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-            Whether you are using Midjourney, Stable Diffusion, DALL-E, or any other advanced AI image generator, our gallery is designed to be your primary source of inspiration. Simply explore our categories, copy the provided premium prompts, and use them to jumpstart your own creative workflow. Discover the secrets behind viral Instagram aesthetics, luxury photography styles, and breathtaking digital art right here.
+            A prompt is a starting point, not a guarantee. The same text gives
+            different results on different models and different seeds, and some
+            instructions turn out to do nothing at all. Our{" "}
+            <Link href="/guides" className="underline underline-offset-4 hover:text-black dark:hover:text-white">
+              guides
+            </Link>{" "}
+            cover the parts that reliably matter — structure, negative prompts,
+            lighting and colour language — and how to adapt wording between tools.
           </p>
         </section>
 

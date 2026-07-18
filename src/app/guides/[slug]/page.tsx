@@ -71,11 +71,42 @@ export default async function GuidePage({
     mainEntityOfPage: `https://moment-galleri.vercel.app/guides/${guide.slug}`,
   };
 
+  // Matches the visible breadcrumb below, which previously had no markup.
+  // Every URL in the chain is a real, indexable page.
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://moment-galleri.vercel.app",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Guides",
+        item: "https://moment-galleri.vercel.app/guides",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: guide.title,
+        item: `https://moment-galleri.vercel.app/guides/${guide.slug}`,
+      },
+    ],
+  };
+
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#000000] dark:text-white selection:bg-black/10 dark:selection:bg-white/30 relative overflow-x-hidden transition-colors duration-300">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -104,7 +135,7 @@ export default async function GuidePage({
           {guide.title}
         </h1>
 
-        <div className="flex items-center gap-3 text-sm text-gray-400 dark:text-gray-500 mb-10">
+        <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 mb-10">
           <span>{guide.readingTime}</span>
           <span className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-600" />
           <span>Updated {guide.updated}</span>
@@ -172,7 +203,7 @@ export default async function GuidePage({
                   <h3 className="font-bold mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors leading-snug">
                     {g.title}
                   </h3>
-                  <span className="text-sm text-gray-400 dark:text-gray-500">{g.readingTime}</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">{g.readingTime}</span>
                 </Link>
               ))}
             </div>

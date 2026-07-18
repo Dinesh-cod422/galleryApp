@@ -86,3 +86,50 @@ body {
     transform: translateX(100%);
   }
 }
+
+/* Scoped replacement for the `.flex::-webkit-scrollbar` rule that used to be
+   injected inline by CategoryFilter. That selector was unscoped and <body> has
+   `flex`, so it removed the document scrollbar on /explore. */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* There were no focus styles anywhere in this stylesheet, so keyboard users had
+   no visible indication of position (WCAG 2.4.7). */
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Two carve-outs are required.
+
+     .animate-fade-in-up sets `opacity: 0` and relies on its animation to reveal
+     content. Cancelling the animation outright would leave every grid card and
+     every pin detail pane permanently invisible. Snap it to the end state
+     instead. */
+  .animate-fade-in-up {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  /* .animate-spin is the upload button's only in-progress affordance. Freezing
+     it removes that feedback from exactly the users this rule protects, so let
+     it keep turning, slowly. */
+  .animate-spin {
+    animation: spin 1.5s linear infinite !important;
+  }
+}

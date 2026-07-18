@@ -40,19 +40,23 @@ function FilterList() {
   };
 
   return (
+    /* The scrollbar-hiding rule used to be injected here as
+       `.flex::-webkit-scrollbar { display: none }`, which is unscoped: <body>
+       carries `flex`, so on /explore the document's own scrollbar vanished,
+       shifting layout by 8px versus every other route. It is now a scoped
+       `.no-scrollbar` utility in globals.css. */
     <div
-      className="flex items-center gap-3 overflow-x-auto pb-4 pt-2"
-      style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      role="group"
+      aria-label="Filter prompts by category"
+      className="no-scrollbar flex items-center gap-3 overflow-x-auto pb-4 pt-2"
     >
-      <style dangerouslySetInnerHTML={{
-        __html: `
-        .flex::-webkit-scrollbar {
-          display: none;
-        }
-      `}} />
-
       {CATEGORIES.map(category => {
-        const isSelected = currentCategory === category;
+        // Case-insensitive: tag links on pin pages emit
+        // `?category=anime` (lowercased) while this list is capitalised, so a
+        // strict comparison left the active chip unhighlighted for anyone
+        // arriving from a pin page.
+        const isSelected =
+          currentCategory.toLowerCase() === category.toLowerCase();
         let buttonStyle = isSelected
           ? "bg-black text-white border-black dark:bg-white dark:text-black dark:border-white shadow-md scale-105"
           : "bg-white text-gray-600 border-gray-200 hover:border-gray-400 dark:bg-[#0a0a0a] dark:text-gray-300 dark:border-white/10 dark:hover:border-white/30 hover:scale-105";
@@ -73,7 +77,11 @@ function FilterList() {
           <button
             key={category}
             onClick={() => handleSelect(category)}
-            className={`px-5 py-2.5 rounded-full whitespace-nowrap text-sm font-semibold transition-all border ${buttonStyle}`}
+            /* aria-current, not aria-pressed: these are single-select
+               navigation, not independent toggles. (The /upload filter chips
+               genuinely are multi-select and correctly use aria-pressed.) */
+            aria-current={isSelected ? "true" : undefined}
+            className={`px-5 py-2.5 rounded-full whitespace-nowrap text-sm font-semibold transition-all border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black dark:focus-visible:outline-white ${buttonStyle}`}
           >
             {category}
           </button>

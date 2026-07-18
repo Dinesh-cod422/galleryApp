@@ -79,7 +79,7 @@ export default function MobileNavbar() {
               className={`relative flex flex-col items-center justify-center w-full h-full transition-colors ${
                 isActive 
                   ? "text-black dark:text-white" 
-                  : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                  : "text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
               }`}
             >
               <div className="relative">
@@ -100,7 +100,7 @@ export default function MobileNavbar() {
         {/* Theme Toggle in Mobile Nav */}
         <button
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          className="flex flex-col items-center justify-center w-full h-full text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+          className="flex flex-col items-center justify-center w-full h-full text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
         >
           {mounted ? (
             theme === 'dark' ? (

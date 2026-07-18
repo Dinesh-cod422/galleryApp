@@ -75,7 +75,7 @@ export default function GuidesPage() {
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6 flex-1">
                 {guide.description}
               </p>
-              <div className="flex items-center gap-3 text-sm text-gray-400 dark:text-gray-500">
+              <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
                 <span>{guide.readingTime}</span>
                 <span className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-600" />
                 <span className="font-semibold text-gray-700 dark:text-gray-200 group-hover:underline">

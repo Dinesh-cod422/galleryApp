@@ -1,23 +1,17 @@
 import { MetadataRoute } from 'next';
 
-// Crawlers that provide no search traffic but hit AI/prompt sites hardest.
-// Blocking them cuts edge requests without affecting Google/Bing indexing.
+// Aggressive commercial scrapers with no referral value. Deliberately NOT
+// blocking AI answer engines (GPTBot, ClaudeBot, PerplexityBot, OAI-SearchBot,
+// Applebot-Extended) or SEO tools (Ahrefs, Semrush) any more:
+//
+//  - The content here is a public Instagram feed republished by its own author,
+//    so there is nothing being protected by blocking them.
+//  - AI answer engines are the fastest-growing referral channel for exactly this
+//    kind of "what was the prompt" query.
+//  - Blocking Ahrefs and Semrush mostly blinds us to our own backlink profile;
+//    it does not stop competitors from seeing it.
 const DISALLOWED_BOTS = [
-  'GPTBot',
-  'OAI-SearchBot',
-  'ChatGPT-User',
-  'CCBot',
-  'ClaudeBot',
-  'Claude-Web',
-  'anthropic-ai',
-  'PerplexityBot',
   'Bytespider',
-  'Amazonbot',
-  'Applebot-Extended',
-  'FacebookBot',
-  'meta-externalagent',
-  'AhrefsBot',
-  'SemrushBot',
   'MJ12bot',
   'DotBot',
   'PetalBot',
