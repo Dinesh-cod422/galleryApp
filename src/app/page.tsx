@@ -1,5 +1,5 @@
 import PinCard from "@/components/PinCard";
-import { getPins } from "@/data/mock-pins";
+import { getPins, toCardData } from "@/data/mock-pins";
 import Header from "@/components/Header";
 import Link from "@/components/AppLink";
 import { guides } from "@/data/guides";
@@ -102,7 +102,7 @@ export default async function Home() {
         <div className="columns-2 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-3 sm:gap-6 lg:gap-8 mx-auto space-y-3 sm:space-y-6">
           {trendingPins.map((pin, index) => (
             <div key={pin.id} className="animate-fade-in-up" style={{ animationDelay: `${(index % 10) * 100 + 100}ms` }}>
-              <PinCard pin={pin} showTrendingTag={true} />
+              <PinCard pin={toCardData(pin)} showTrendingTag={true} />
             </div>
           ))}
         </div>

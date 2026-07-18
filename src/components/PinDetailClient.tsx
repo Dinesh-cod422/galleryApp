@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "@/components/AppLink";
-import { type Pin } from "@/data/mock-pins";
+import { type Pin, type PinCardData } from "@/data/mock-pins";
 import { getPinEntry } from "@/data/pin-editorial";
 import { parsePromptSections, hasStructure } from "@/lib/promptStructure";
 import PinCard from "@/components/PinCard";
@@ -12,10 +12,9 @@ import Header from "@/components/Header";
 import { useWishlist } from "@/context/WishlistContext";
 import { getPinContent } from "@/lib/pinContent";
 
-export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | null, relatedPins?: Pin[] }) {
+export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | null, relatedPins?: PinCardData[] }) {
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedPrompt, setCopiedPrompt] = useState(false);
-  const [isPromptExpanded, setIsPromptExpanded] = useState(false);
 
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const [mounted, setMounted] = useState(false);
@@ -249,9 +248,10 @@ export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | 
             </h3>
 
             <div className="bg-white dark:bg-[#0a0a0a] p-6 rounded-[2rem] mb-10 border border-black/5 dark:border-white/10 shadow-xl dark:shadow-[0_0_30px_rgba(0,0,0,0.5)] flex flex-col items-start relative group">
-              <div
-                className={`w-full transition-all duration-500 ${!isPromptExpanded ? "max-h-64 overflow-hidden" : ""}`}
-              >
+              {/* Shown in full. The prompt is what this site publishes, so
+                  collapsing it behind a "Read Full Prompt" toggle hid the page's
+                  actual content by default. */}
+              <div className="w-full">
                 {structured ? (
                   /* The prompt's own sections, rendered as sections. This is a
                      reformat of the author's text — no wording is added,
@@ -276,21 +276,6 @@ export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | 
                   </div>
                 )}
               </div>
-
-              {/* Fade out effect when collapsed */}
-              {!isPromptExpanded && (
-                <div className="absolute bottom-16 left-0 right-0 h-20 bg-gradient-to-t from-white dark:from-[#0a0a0a] to-transparent pointer-events-none" />
-              )}
-
-              <button
-                onClick={() => setIsPromptExpanded(!isPromptExpanded)}
-                className="mt-6 text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all flex items-center gap-2 z-10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 px-5 py-2.5 rounded-full border border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 hover:scale-105"
-              >
-                {isPromptExpanded ? "Show Less" : "Read Full Prompt"}
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform duration-500 ${isPromptExpanded ? "rotate-180" : ""}`}>
-                  <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-              </button>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 mt-auto">

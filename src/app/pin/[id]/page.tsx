@@ -1,4 +1,4 @@
-import { getPins } from "@/data/mock-pins";
+import { getPins, toCardData } from "@/data/mock-pins";
 import PinDetailClient from "@/components/PinDetailClient";
 import { getPinContent } from "@/lib/pinContent";
 import { getPinEntry, isFullyDocumented } from "@/data/pin-editorial";
@@ -123,5 +123,5 @@ export default async function PinDetailPage({ params }: { params: Promise<{ id: 
     relatedPins = [...relatedPins, ...remaining];
   }
 
-  return <PinDetailClient pin={pin} relatedPins={relatedPins} />;
+  return <PinDetailClient pin={pin} relatedPins={relatedPins.map(toCardData)} />;
 }

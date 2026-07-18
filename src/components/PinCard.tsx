@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "@/components/AppLink";
-import type { Pin } from "@/data/mock-pins";
+import type { PinCardData } from "@/data/mock-pins";
 import { getPinEntry } from "@/data/pin-editorial";
 import { promptExcerpt } from "@/lib/promptStructure";
 import { getInstagramEmbedUrl } from "@/components/InstagramCredit";
@@ -10,7 +10,7 @@ import { useWishlist } from "@/context/WishlistContext";
 import { useState, useEffect } from "react";
 
 interface PinCardProps {
-  pin: Pin;
+  pin: PinCardData;
   showTrendingTag?: boolean;
 }
 
@@ -49,7 +49,9 @@ export default function PinCard({ pin, showTrendingTag = false }: PinCardProps) 
 
   const isLiked = mounted ? isInWishlist(pin.id) : false;
   const media = getPinEntry(pin.id)?.media;
-  const excerpt = promptExcerpt(pin.prompt, 220);
+  // `excerpt` is precomputed server-side. The fallback covers wishlist entries
+  // saved before the split, which still carry a full `prompt` and no excerpt.
+  const excerpt = pin.excerpt ?? promptExcerpt(pin.prompt ?? "", 220);
   const accent = accentFor(pin.filter?.[0]);
 
   const handleWishlistToggle = (e: React.MouseEvent) => {

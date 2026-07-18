@@ -1,11 +1,11 @@
 "use client"
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { Pin } from '@/data/mock-pins';
+import type { PinCardData } from '@/data/mock-pins';
 
 interface WishlistContextType {
-  wishlist: Pin[];
-  addToWishlist: (pin: Pin) => void;
+  wishlist: PinCardData[];
+  addToWishlist: (pin: PinCardData) => void;
   removeFromWishlist: (pinId: string) => void;
   isInWishlist: (pinId: string) => boolean;
 }
@@ -13,7 +13,7 @@ interface WishlistContextType {
 const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
-  const [wishlist, setWishlist] = useState<Pin[]>([]);
+  const [wishlist, setWishlist] = useState<PinCardData[]>([]);
 
   useEffect(() => {
     const saved = localStorage.getItem('guessme-wishlist');
@@ -26,7 +26,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const addToWishlist = (pin: Pin) => {
+  const addToWishlist = (pin: PinCardData) => {
     setWishlist(prev => {
       if (prev.some(item => item.id === pin.id)) return prev; // Deduplication
       
