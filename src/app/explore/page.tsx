@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Explore Aesthetic AI Prompts Library",
   description: "Search and filter through the complete catalog of cinematic inspirations, image styles, and Midjourney/Stable Diffusion prompt configurations.",
   keywords: ["ai prompt database", "midjourney catalog", "explore aesthetic prompts", "stable diffusion prompts"],
+  alternates: { canonical: "/explore" },
 };
 
 export default async function ExplorePage(props: {
@@ -21,10 +22,11 @@ export default async function ExplorePage(props: {
 
   // Apply Search Query Filter
   if (q) {
+    // Deliberately no longer searches `author` — those names were fabricated, so
+    // matching on them only ever produced meaningless hits.
     pins = pins.filter(pin =>
       pin.title.toLowerCase().includes(q) ||
-      pin.prompt.toLowerCase().includes(q) ||
-      pin.author.toLowerCase().includes(q)
+      pin.prompt.toLowerCase().includes(q)
     );
   }
 
@@ -64,8 +66,10 @@ export default async function ExplorePage(props: {
         return /\b(couple|husband|wife|wedding|together|partner)\b/.test(text);
       }
       
-      // Generic fallback
-      return text.includes(category) || pin.author.toLowerCase().includes(category);
+      // Generic fallback. Author matching removed with the fabricated names —
+      // verified to change no chip's result set, since every pin that matched on
+      // author already matched on title or prompt.
+      return text.includes(category);
     });
   }
 

@@ -3,44 +3,82 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "About Us",
-  description: "Learn more about Moments Gallari, our mission to curate the best AI prompts, and the team behind the scenes.",
+  description: "Who runs Moments Gallari, where the prompts come from, and how every prompt is tested before it is published.",
+  alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#000000] dark:text-white selection:bg-black/10 dark:selection:bg-white/30 relative overflow-x-hidden transition-colors duration-300">
       <Header />
-      
-      <div className="relative z-10 px-4 sm:px-6 pt-8 sm:pt-32 pb-24 max-w-4xl mx-auto">
-        <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-8">About Us</h1>
-        
+
+      <div className="relative z-10 px-4 sm:px-6 pt-8 sm:pt-32 pb-24 max-w-3xl mx-auto">
+        <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-8">About Moments Gallari</h1>
+
         <div className="prose prose-lg dark:prose-invert max-w-none">
-          <p className="lead text-xl text-gray-600 dark:text-gray-300 mb-8">
-            Welcome to Moments Gallari, your premium destination for exploring, discovering, and getting inspired by high-quality AI-generated art and the prompts that created them.
+          <p className="lead">
+            Moments Gallari is a small, independently run library of AI image prompts. Every prompt
+            here is run through real image generators before publication, and every page shows the
+            results — including the ones that didn&apos;t work.
           </p>
 
-          <h2 className="text-2xl font-bold mt-12 mb-4">Our Mission</h2>
+          <h2>Who runs this</h2>
           <p>
-            In the rapidly evolving world of Artificial Intelligence, creating the perfect image often requires the perfect prompt. We realized that while there are many beautiful AI images online, the secret behind them—the text prompts—are often hidden. 
-          </p>
-          <p>
-            Our mission is to bridge this gap. We curate the most aesthetic, cinematic, and professional AI designs and provide you with the exact prompts used to generate them. Whether you are using Midjourney, Stable Diffusion, or DALL-E, our gallery is designed to jumpstart your creative process.
+            My name is <strong>[YOUR FULL NAME]</strong>. I&apos;m <strong>[YOUR ROLE]</strong> based
+            in <strong>[CITY, COUNTRY]</strong>, and I&apos;ve been working with AI image generation
+            since <strong>[YEAR]</strong>. I build and write every page on this site myself. You can
+            reach me at{" "}
+            <a href="mailto:dineshkumarmurugesan002@gmail.com" className="break-all">
+              dineshkumarmurugesan002@gmail.com
+            </a>
+            .
           </p>
 
-          <h2 className="text-2xl font-bold mt-12 mb-4">What We Offer</h2>
-          <ul className="list-disc pl-6 space-y-2 mb-8">
-            <li><strong>Premium Curated Gallery:</strong> We hand-pick images that stand out in quality, composition, and aesthetics.</li>
-            <li><strong>Copy-and-Paste Prompts:</strong> Every image comes with the full text prompt, free for you to copy, modify, and use in your own AI generations.</li>
-            <li><strong>Trend Discovery:</strong> Stay updated with the latest styles in AI art, from hyper-realistic photography to stylized digital illustrations.</li>
-            <li><strong>Creative Inspiration:</strong> Even if you don't use AI generators, our gallery serves as a mood board for designers, writers, and artists.</li>
+          <h2>What we actually do</h2>
+          <p>
+            Most prompt collections are lists — copied, posted, never tested. That was true of the
+            first version of this site, and it&apos;s why it was rebuilt. For each prompt we publish now:
+          </p>
+          <ul>
+            <li>We run it ourselves and record the model and settings used.</li>
+            <li>We publish <strong>our own</strong> generated images, so you can see what the prompt really produces.</li>
+            <li>
+              We document where it fails — contradictory instructions, tokens that do nothing, and
+              the parts that need rewriting for a particular model.
+            </li>
+            <li>We publish specific, tested edits rather than generic advice.</li>
           </ul>
 
-          <h2 className="text-2xl font-bold mt-12 mb-4">Our Community</h2>
+          <h2>Where the prompts come from</h2>
           <p>
-            Moments Gallari is built for creators, by creators. We believe that sharing knowledge and tools elevates everyone's work. We encourage you to explore our gallery, try out the prompts, and add your own unique twists.
+            The prompts and reference images here were published on our own Instagram account,{" "}
+            <a href="https://www.instagram.com/moments_galleri" rel="noopener noreferrer" target="_blank">
+              @moments_galleri
+            </a>
+            , and each page links back to the original post. Prompts are short functional text and we
+            make no ownership claim over them. If a prompt listed here originated with you, email me
+            and it will be credited or removed within <strong>[N]</strong> business days.
           </p>
+
+          <h2>What we don&apos;t do</h2>
           <p>
-            If you have any questions or feedback, feel free to reach out via our <a href="/contact" className="text-blue-600 dark:text-blue-400 hover:underline">Contact page</a>.
+            We don&apos;t republish other people&apos;s generated images as our own. We don&apos;t use
+            invented contributor names — an earlier version of this site did, and those have been
+            removed. We don&apos;t publish a prompt we haven&apos;t run.
+          </p>
+
+          <p>
+            This site is funded by display advertising. We have no commercial relationship with
+            Midjourney, Google, Stability AI or Meta.
+          </p>
+
+          <p>
+            Questions or corrections? The{" "}
+            <a href="/contact">contact page</a> has everything.
+          </p>
+
+          <p>
+            <em>Last updated: [DATE]</em>
           </p>
         </div>
       </div>

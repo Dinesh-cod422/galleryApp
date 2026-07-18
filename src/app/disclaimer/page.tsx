@@ -4,6 +4,7 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Disclaimer",
   description: "Important disclaimers regarding AI generated content on Moments Gallari.",
+  alternates: { canonical: "/disclaimer" },
 };
 
 export default function DisclaimerPage() {

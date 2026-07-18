@@ -79,15 +79,19 @@ export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | 
     "@context": "https://schema.org",
     "@type": "ImageObject",
     "name": content.displayTitle,
-    "description": pin.prompt,
+    // Truncated: the raw prompt runs to 5,395 chars on the longest pin. Not set
+    // to content.summary — that string is near-identical across every pin and
+    // would strengthen the duplicate-content signal rather than reduce it.
+    "description": pin.prompt.length > 200 ? `${pin.prompt.slice(0, 197)}...` : pin.prompt,
     "contentUrl": pin.imageUrl,
+    // Organization, not Person: no individual is being credited here.
     "author": {
-      "@type": "Person",
-      "name": pin.author
+      "@type": "Organization",
+      "name": "Moments Gallari"
     },
     "creator": {
-      "@type": "Person",
-      "name": pin.author
+      "@type": "Organization",
+      "name": "Moments Gallari"
     },
     "publisher": {
       "@type": "Organization",
@@ -165,9 +169,7 @@ export default function PinDetailClient({ pin, relatedPins = [] }: { pin: Pin | 
           {/* Details Section */}
           <div className="w-full lg:w-1/2 flex flex-col justify-center animate-fade-in-up z-20 pt-2 lg:pt-8" style={{ animationDelay: '200ms' }}>
             <div className="flex items-center justify-between mb-6">
-              <div className="inline-block px-4 py-1.5 rounded-full border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 w-max text-xs font-bold tracking-widest text-gray-600 dark:text-gray-300 uppercase shadow-sm">
-                Premium Resource
-              </div>
+
 
               {/* Add to Wishlist Button */}
               {mounted && (

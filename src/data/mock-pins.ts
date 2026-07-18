@@ -6,8 +6,15 @@ export interface Pin {
   imageUrl: string;
   title: string;
   prompt: string;
-  author: string;
-  avatarUrl: string;
+  /**
+   * Legacy fields. Every value that ever existed here was fabricated — invented
+   * handles paired with randomuser.me stock avatars — which is a Publisher
+   * Policies "Misrepresentation" exposure. They are optional so the upstream JSON
+   * can drop them without breaking the build, and nothing renders them any more.
+   * Remove from the type once the upstream data is clean.
+   */
+  author?: string;
+  avatarUrl?: string;
   filter?: string[];
   Tstatus?: string;
   TrendingPosition?: number;

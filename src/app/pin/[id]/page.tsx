@@ -1,6 +1,7 @@
 import { getPins } from "@/data/mock-pins";
 import PinDetailClient from "@/components/PinDetailClient";
 import { getPinContent } from "@/lib/pinContent";
+import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 // Pre-render every known pin at build time so navigations and prefetches are
@@ -34,7 +35,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
   return {
     title: `${content.displayTitle} | AI Prompt Design`,
-    description: `${content.displayTitle} — ${content.summary} Prompt curated by ${pin.author}.`,
+    description: `${content.displayTitle} — ${content.summary}`,
+    alternates: { canonical: `/pin/${pin.id}` },
     keywords: [
       content.displayTitle.toLowerCase(),
       ...(pin.filter || []).map(f => f.toLowerCase()),
@@ -67,23 +69,32 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export default async function PinDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
   const pins = await getPins();
-  const pin = pins.find(p => p.id === resolvedParams.id) || null;
 
-  // Find related pins
-  let relatedPins: typeof pins = [];
-  if (pin) {
-    // 1. Try finding pins with overlapping filters
-    relatedPins = pins
-      .filter(p => p.id !== pin.id && p.filter?.some(f => pin.filter?.includes(f)))
-      .slice(0, 12);
-    
-    // 2. If we don't have enough related pins, fill with random or trending pins
-    if (relatedPins.length < 12) {
-      const remaining = pins
-        .filter(p => p.id !== pin.id && !relatedPins.some(rp => rp.id === p.id))
-        .slice(0, 12 - relatedPins.length);
-      relatedPins = [...relatedPins, ...remaining];
-    }
+  // getPins() returns [] when the upstream GitHub fetch fails. Without this guard
+  // a transient outage would make notFound() fire for every pin and cache a 404
+  // for the whole catalogue. Throwing yields a 500, which is retried, not cached.
+  if (pins.length === 0) {
+    throw new Error("Pin catalogue is unavailable; refusing to serve a 404.");
+  }
+
+  const pin = pins.find(p => p.id === resolvedParams.id);
+
+  // Unknown ids previously rendered HTTP 200 with an empty shell — a soft 404.
+  if (!pin) {
+    notFound();
+  }
+
+  // 1. Try finding pins with overlapping filters
+  let relatedPins = pins
+    .filter(p => p.id !== pin.id && p.filter?.some(f => pin.filter?.includes(f)))
+    .slice(0, 12);
+
+  // 2. If we don't have enough related pins, fill with random or trending pins
+  if (relatedPins.length < 12) {
+    const remaining = pins
+      .filter(p => p.id !== pin.id && !relatedPins.some(rp => rp.id === p.id))
+      .slice(0, 12 - relatedPins.length);
+    relatedPins = [...relatedPins, ...remaining];
   }
 
   return <PinDetailClient pin={pin} relatedPins={relatedPins} />;

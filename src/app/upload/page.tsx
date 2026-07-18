@@ -25,9 +25,12 @@ export default function UploadPage() {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   
+  const [uploadSecret, setUploadSecret] = useState("");
+
   const [formData, setFormData] = useState({
     prompt: "",
     embedUrl: "",
+    imageUrl: "",
     Tstatus: "Trending",
     TrendingPosition: "1",
   });
@@ -61,6 +64,7 @@ export default function UploadPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "x-upload-secret": uploadSecret,
         },
         body: JSON.stringify({
           ...formData,
@@ -75,6 +79,7 @@ export default function UploadPage() {
         setFormData({
           prompt: "",
           embedUrl: "",
+          imageUrl: "",
           Tstatus: "Trending",
           TrendingPosition: "1",
         });
@@ -98,7 +103,8 @@ export default function UploadPage() {
             Upload New Pin
           </h1>
           <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
-            Title, Image, Author, and Avatar are auto-generated. Fill out the core details below.
+            The title is derived from the prompt. Every pin must ship with its own
+            self-hosted render — no image, no publish.
           </p>
         </div>
 
@@ -120,6 +126,46 @@ export default function UploadPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+
+            <div className="sm:col-span-2">
+              <label htmlFor="uploadSecret" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                Upload passphrase <span className="text-red-500">*</span>
+              </label>
+              <div className="mt-1">
+                <input
+                  type="password"
+                  name="uploadSecret"
+                  id="uploadSecret"
+                  required
+                  autoComplete="current-password"
+                  value={uploadSecret}
+                  onChange={(e) => setUploadSecret(e.target.value)}
+                  className="block w-full rounded-xl border-0 py-3 px-4 text-neutral-900 dark:text-white shadow-sm ring-1 ring-inset ring-neutral-300 dark:ring-neutral-700 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-transparent transition-all"
+                  placeholder="Must match UPLOAD_SECRET"
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-2">
+              <label htmlFor="imageUrl" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                Image path (your own render) <span className="text-red-500">*</span>
+              </label>
+              <div className="mt-1">
+                <input
+                  type="text"
+                  name="imageUrl"
+                  id="imageUrl"
+                  required
+                  value={formData.imageUrl}
+                  onChange={handleChange}
+                  className="block w-full rounded-xl border-0 py-3 px-4 text-neutral-900 dark:text-white shadow-sm ring-1 ring-inset ring-neutral-300 dark:ring-neutral-700 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-transparent transition-all"
+                  placeholder="e.g. /pins/heritage-courtyard.webp"
+                />
+              </div>
+              <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+                Commit the file to <code>public/pins/</code> first. Each pin needs a distinct image.
+              </p>
+            </div>
 
             <div className="sm:col-span-2">
               <label htmlFor="embedUrl" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
@@ -158,16 +204,17 @@ export default function UploadPage() {
             </div>
 
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+              <span id="filters-label" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                 Filters (Select Multiple)
-              </label>
-              <div className="flex flex-wrap gap-2">
+              </span>
+              <div role="group" aria-labelledby="filters-label" className="flex flex-wrap gap-2">
                 {AVAILABLE_FILTERS.map(filter => {
                   const isSelected = selectedFilters.includes(filter);
                   return (
                     <button
                       type="button"
                       key={filter}
+                      aria-pressed={isSelected}
                       onClick={() => toggleFilter(filter)}
                       className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                         isSelected 

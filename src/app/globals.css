@@ -1,4 +1,7 @@
 @import "tailwindcss";
+/* Required by the `prose` classes on /about, /privacy, /terms and /disclaimer.
+   Without it those classes were dead CSS and the legal pages rendered unstyled. */
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:where(.dark, .dark *));
 

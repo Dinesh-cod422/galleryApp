@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { GoogleAnalytics } from '@next/third-parties/google';
-import Script from 'next/script';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,8 +20,6 @@ export const viewport: Viewport = {
   ],
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
 
 export const metadata: Metadata = {
@@ -47,9 +44,6 @@ export const metadata: Metadata = {
     "google-adsense-account": "ca-pub-7320845599419472"
   },
   metadataBase: new URL("https://moment-galleri.vercel.app"),
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
     title: "Moments Gallari - Premium AI Prompts & Aesthetic Designs",
     description: "Explore a curated collection of beautiful, high-quality AI prompts and custom design ideas.",
@@ -87,6 +81,9 @@ import MobileNavbar from "@/components/MobileNavbar";
 import Footer from "@/components/Footer";
 import CookieConsent from "@/components/CookieConsent";
 
+import AdSenseScript from "@/components/AdSenseScript";
+import ConsentDefaults from "@/components/ConsentDefaults";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -98,7 +95,9 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-white text-black dark:bg-[#000000] dark:text-white transition-colors duration-300 overscroll-none select-none touch-manipulation">
+      {/* Must precede GoogleAnalytics and AdSenseScript — see ConsentDefaults. */}
+      <ConsentDefaults />
+      <body className="min-h-full flex flex-col bg-white text-black dark:bg-[#000000] dark:text-white transition-colors duration-300 overscroll-none touch-manipulation">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <WishlistProvider>
             {children}
@@ -109,12 +108,7 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
       <GoogleAnalytics gaId="G-QVPTWK1YV2" />
-      <Script
-        async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7320845599419472"
-        crossOrigin="anonymous"
-        strategy="afterInteractive"
-      />
+      <AdSenseScript />
     </html>
   );
 }

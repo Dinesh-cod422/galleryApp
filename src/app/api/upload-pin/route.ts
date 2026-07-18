@@ -1,10 +1,34 @@
 import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
-import { exec } from "child_process";
-import { promisify } from "util";
 
-const execAsync = promisify(exec);
+/** Only these hosts may ever reach an <iframe src>. */
+const ALLOWED_EMBED_HOSTS = new Set(["instagram.com", "www.instagram.com"]);
+
+/** Reject bodies larger than this before parsing them. */
+const MAX_BODY_BYTES = 64 * 1024;
+
+function isAllowedEmbedUrl(value: unknown): value is string {
+  if (typeof value !== "string") return false;
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" && ALLOWED_EMBED_HOSTS.has(url.hostname);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * A pin must ship with our own render. Random image assignment is what produced
+ * 13 distinct images across 111 pins and a 36% `og:image` 404 rate — it is a
+ * content defect, not a convenience, so the path is required and validated here.
+ */
+function isAllowedImageUrl(value: unknown): value is string {
+  return (
+    typeof value === "string" &&
+    /^\/pins\/[A-Za-z0-9._-]+\.(webp|png|jpg|jpeg)$/.test(value)
+  );
+}
 
 // Helper function to auto-generate a generic title from the prompt
 function generateTitle(prompt: string): string {
@@ -48,19 +72,50 @@ function formatPromptStructure(prompt: string): string {
 
 export async function POST(req: Request) {
   try {
+    // 0. Authenticate BEFORE touching the body. This endpoint drives a
+    // GITHUB_TOKEN-authenticated write to the repo that serves 100% of
+    // production content, so it must never be reachable anonymously.
+    const secret = process.env.UPLOAD_SECRET;
+    if (!secret) {
+      console.error("UPLOAD_SECRET is not configured; refusing all uploads.");
+      return NextResponse.json({ error: "Uploads are disabled." }, { status: 503 });
+    }
+    if (req.headers.get("x-upload-secret") !== secret) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const declaredLength = Number(req.headers.get("content-length") ?? 0);
+    if (declaredLength > MAX_BODY_BYTES) {
+      return NextResponse.json({ error: "Payload too large" }, { status: 413 });
+    }
+
     const body = await req.json();
     const {
       embedUrl,
+      imageUrl,
       prompt,
       filter,
       Tstatus,
       TrendingPosition,
     } = body;
 
-    // We no longer require title from the frontend, only embedUrl and prompt.
     if (!embedUrl || !prompt) {
       return NextResponse.json(
         { error: "Missing required fields: embedUrl or prompt" },
+        { status: 400 }
+      );
+    }
+
+    if (!isAllowedEmbedUrl(embedUrl)) {
+      return NextResponse.json(
+        { error: "embedUrl must be an https://instagram.com URL." },
+        { status: 400 }
+      );
+    }
+
+    if (!isAllowedImageUrl(imageUrl)) {
+      return NextResponse.json(
+        { error: "imageUrl is required and must be a path like /pins/my-render.webp" },
         { status: 400 }
       );
     }
@@ -133,18 +188,11 @@ export async function POST(req: Request) {
     // 4. Auto-generate Title
     const generatedTitle = generateTitle(prompt);
 
-    // 5. Auto-generate Image URL (random from 1 to 10)
-    const randomImgId = Math.floor(Math.random() * 10) + 1;
-    const generatedImageUrl = `/pins/${randomImgId}.webp`;
-
-    // 6. Auto-generate Author
-    const authors = ["CinematicArt", "AestheticVibes", "PremiumGallery", "CreativeStudio", "ArtisticSoul", "LoveArt"];
-    const generatedAuthor = authors[Math.floor(Math.random() * authors.length)];
-
-    // 7. Auto-generate Avatar URL
-    const gender = Math.random() > 0.5 ? "women" : "men";
-    const avatarId = Math.floor(Math.random() * 90) + 1;
-    const generatedAvatarUrl = `https://randomuser.me/api/portraits/${gender}/${avatarId}.jpg`;
+    // NOTE: this route previously invented an `author` name and a randomuser.me
+    // avatar for every pin, and assigned a random imageUrl. Attributing content to
+    // people who do not exist is a Google Publisher Policies "Misrepresentation"
+    // violation, so nothing here fabricates identity or media any more. The caller
+    // supplies a real imageUrl; authorship belongs to the site itself.
 
     // Parse filter if it's sent as an array or comma-separated
     let parsedFilter: string[] = [];
@@ -157,10 +205,8 @@ export async function POST(req: Request) {
     const newPin = {
       id: newId,
       embedUrl,
-      imageUrl: generatedImageUrl,
+      imageUrl,
       title: generatedTitle,
-      author: generatedAuthor,
-      avatarUrl: generatedAvatarUrl,
       prompt: formatPromptStructure(prompt),
       filter: parsedFilter,
       Tstatus: Tstatus || "Trending",
@@ -204,27 +250,28 @@ export async function POST(req: Request) {
         }
 
         console.log("Successfully pushed changes directly to GitHub repository");
-      } catch (gitError: any) {
+      } catch (gitError) {
         console.error("GitHub API error:", gitError);
+        // The GitHub file is the source of truth for production. If the push
+        // failed the pin is NOT live, so this must not report success — the
+        // local write above only ever lands on a dev filesystem.
         return NextResponse.json(
-          { 
-            success: true, 
-            message: "Pin saved successfully locally, but failed to push directly to GitHub.",
-            gitError: gitError.message
-          },
-          { status: 200 }
+          { error: "Pin could not be published: the upstream write failed." },
+          { status: 502 }
         );
       }
     } else {
-      console.warn("GITHUB_TOKEN not found, skipping GitHub push.");
+      console.error("GITHUB_TOKEN not found; pin was not published.");
+      return NextResponse.json(
+        { error: "Uploads are not configured on this environment." },
+        { status: 503 }
+      );
     }
 
     return NextResponse.json({ success: true, pin: newPin });
-  } catch (error: any) {
+  } catch (error) {
+    // Log server-side only — echoing error.message leaked GitHub API details.
     console.error("Error saving pin:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error", details: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

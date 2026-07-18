@@ -2,6 +2,12 @@ import { MetadataRoute } from 'next';
 import { getPins, type Pin } from '@/data/mock-pins';
 import { guides } from '@/data/guides';
 
+// Regenerate hourly. Without this the sitemap is frozen at the build snapshot —
+// it was serving 81 pin URLs against a 111-pin corpus. Deliberately NOT
+// `cache: 'no-store'`: getPins() returns [] on upstream failure, so an
+// uncached read would happily serve a 200 sitemap containing zero pins.
+export const revalidate = 3600;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://moment-galleri.vercel.app';
 
@@ -41,7 +47,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/guides`, changeFrequency: 'weekly' as const, priority: 0.8 },
     { url: `${baseUrl}/about`, changeFrequency: 'monthly' as const, priority: 0.5 },
     { url: `${baseUrl}/contact`, changeFrequency: 'monthly' as const, priority: 0.4 },
-    { url: `${baseUrl}/wishlist`, changeFrequency: 'weekly' as const, priority: 0.4 },
     { url: `${baseUrl}/privacy`, changeFrequency: 'yearly' as const, priority: 0.3 },
     { url: `${baseUrl}/terms`, changeFrequency: 'yearly' as const, priority: 0.3 },
     { url: `${baseUrl}/disclaimer`, changeFrequency: 'yearly' as const, priority: 0.3 },
